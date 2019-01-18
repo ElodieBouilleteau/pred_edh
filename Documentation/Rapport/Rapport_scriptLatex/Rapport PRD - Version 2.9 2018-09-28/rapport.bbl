@@ -1,0 +1,150 @@
+\begin{thebibliography}{LLTAM17}
+
+\bibitem[APH13]{OVBT}
+Y.~Ban; S. Ba;~X. Alameda-Pined and R.~Horaud.
+\newblock The way they move: Tracking multiple targets with similar appearance.
+\newblock {\em ICCV}, 2013.
+
+\bibitem[Are16]{oICF}
+Hilke Kieritz ; Stefan Becker ; Wolfgang Hübner ;~Michael Arens.
+\newblock Online multi-person tracking using integral channel features.
+\newblock {\em 2016 13th IEEE International Conference on Advanced Video and
+  Signal Based Surveillance (AVSS)}, 2016.
+
+\bibitem[Cho15]{NOMT}
+Wongun Choi.
+\newblock Near-online multi-target tracking with aggregated local flow
+  descriptor.
+\newblock {\em 2015 IEEE International Conference on Computer Vision (ICCV)},
+  2015.
+
+\bibitem[Far16]{Yolo}
+Joseph Redmon ; Santosh Divvala ; Ross Girshick ;~Ali Farhadi.
+\newblock You only look once: Unified, real-time object detection.
+\newblock {\em 2016 IEEE Conference on Computer Vision and Pattern Recognition
+  (CVPR)}, 2016.
+
+\bibitem[Fow11]{DPNMS}
+Hamed Pirsiavash ; Deva Ramanan ; Charless~C. Fowlkes.
+\newblock Globally-optimal greedy algorithms for tracking a variable number of
+  objects.
+\newblock {\em CVPR 2011}, 2011.
+
+\bibitem[Gir15]{FastRCNN}
+Ross Girshick.
+\newblock Fast r-cnn.
+\newblock {\em 2015 IEEE International Conference on Computer Vision (ICCV)},
+  2015.
+
+\bibitem[Haf98]{LeNEt}
+Y.~Lecun ; L. Bottou ; Y. Bengio ;~P. Haffner.
+\newblock Gradient-based learning applied to document recognition.
+\newblock {\em Proceedings of the IEEE}, 96:2278 -- 2324, 1998.
+
+\bibitem[HW98]{HeiseleAndWohler}
+B.~Heisele and C.~Wöhler.
+\newblock Motion-based recognition of pedestrians.
+\newblock {\em Proceedings. Fourteenth International Conference on Pattern
+  Recognition}, 2, 1998.
+
+\bibitem[Ler17]{LINF1}
+Loïc Fagot-BouquetRomaric AudigierYoann DhomeYoann~DhomeFrédéric Lerasle.
+\newblock Improving multi-frame data association with sparse representations
+  for robust near-online multi-object tracking.
+\newblock {\em European Conference on Computer Vision}, 2017.
+
+\bibitem[LLTAM17]{EtatArt}
+Konrad Schindler ; Daniel Cremers ; Ian Reid ; Stefan~Roth Laura Leal-Taixe ;
+  Anton~Milan.
+\newblock Tracking the trackers: An analysis of the state of the art in
+  multiple object tracking.
+\newblock 2017.
+
+\bibitem[Mal14]{RCNN}
+Ross Girshick ; Jeff Donahue ; Trevor Darrell ;~Jitendra Malik.
+\newblock Rich feature hierarchies for accurate object detection and semantic
+  segmentation.
+\newblock {\em 2014 IEEE Conference on Computer Vision and Pattern
+  Recognition}, 2014.
+
+\bibitem[Mur17]{PROP2}
+Samuel Murray.
+\newblock Real-time multiple object tracking - a study on the importance of
+  speed.
+\newblock 2017.
+
+\bibitem[Pau17]{PROP1}
+Nicolai Wojke ; Alex Bewley ;~Dietrich Paulus.
+\newblock Simple online and realtime tracking with a deep association metric.
+\newblock {\em 2017 IEEE International Conference on Image Processing (ICIP)},
+  2017.
+
+\bibitem[Reh15]{MHTDAM}
+Chanho Kim ; Fuxin Li ; Arridhana Ciptadi ; James~M. Rehg.
+\newblock Multiple hypothesis tracking revisited.
+\newblock {\em 2015 IEEE International Conference on Computer Vision (ICCV)},
+  2015.
+
+\bibitem[Ros11]{LP2D}
+Laura Leal-Taixé ; Gerard Pons-Moll ;~Bodo Rosenhahn.
+\newblock Everybody needs somebody: Modeling social and grouping behavior on a
+  linear programming multiple people tracker.
+\newblock {\em 2011 IEEE International Conference on Computer Vision Workshops
+  (ICCV Workshops)}, 2011.
+
+\bibitem[Sav17]{MDPNN16}
+Amir Sadeghian ; Alexandre Alahi ;~Silvio Savarese.
+\newblock Tracking the untrackable: Learning to track multiple cues with
+  long-term dependencies.
+\newblock {\em 2017 IEEE International Conference on Computer Vision (ICCV)},
+  2017.
+
+\bibitem[SC11]{SMOT}
+C.~Dicle;~M. Sznaier and O.~Camps.
+\newblock Everybody needs somebody: Modeling social and grouping behavior on a
+  linear programming multiple people tracker.
+\newblock {\em 2011 IEEE International Conference on Computer Vision Workshops
+  (ICCV Workshops)}, 2011.
+
+\bibitem[Sch17]{JMC}
+Siyu Tang ; Mykhaylo Andriluka ; Bjoern Andres ;~Bernt Schiele.
+\newblock Multiple people tracking by lifted multicut and person
+  re-identification.
+\newblock {\em 2017 IEEE Conference on Computer Vision and Pattern Recognition
+  (CVPR)}, 2017.
+
+\bibitem[Seo18]{PROP3}
+Burak UzkentYoung-Woo SeoYoung-Woo Seo.
+\newblock Enkcf: Ensemble of kernelized correlation filters for high-speed
+  object tracking.
+\newblock 2018.
+
+\bibitem[SH12]{ImageNet}
+A.~Krizhevsky;~I. Sutskever and G.~Hinton.
+\newblock Imagenet classification with deep convolutional neural networks.
+\newblock {\em In NIPS}, 2012.
+
+\bibitem[SR16]{DCOX}
+A.~Milan;~K. Schindler; and S.~Roth.
+\newblock Multi-target tracking by discrete-continuous energy minimization.
+\newblock {\em TPAMI}, 2016.
+
+\bibitem[Sun17]{FasterRCNN}
+Shaoqing Ren ; Kaiming He ; Ross Girshick ;~Jian Sun.
+\newblock Faster r-cnn: Towards real-time object detection with region proposal
+  networks.
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  39:1137 -- 1149, 2017.
+
+\bibitem[Upc16]{Sort}
+Alex Bewley ; Zongyuan Ge ; Lionel Ott ; Fabio Ramos ;~Ben Upcroft.
+\newblock Simple online and realtime tracking.
+\newblock {\em 2016 IEEE International Conference on Image Processing (ICIP)},
+  2016.
+
+\bibitem[VJ01]{ViolaJones}
+Paul Viola and Michael Jones.
+\newblock Rapid object detection using a boosted cascade of simple features.
+\newblock {\em Conference on Computer Vision and Pattern Recognition}, 2001.
+
+\end{thebibliography}

@@ -1,0 +1,73 @@
+\documentclass[11pt]{report}
+
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\title{Fiche de Lecture 1}
+\author{Élodie Bouilleteau}
+\date{Mardi 16 Octobre 2018}
+
+\begin{document}
+
+\maketitle
+\renewcommand{\thesection}{\arabic{section}} 
+
+\section{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : Detecting and Tracking of Multiple People in Video based on Hybrid Detection and Human Anatomy Body Proportion.
+	\end{flushleft}
+	\textbf{Auteurs} : El Maghraby Amr, Abdalla Mahmoud, Enany Othman et Y. EL
+Nahas Mohamed.\\\\
+	\textbf{Université} : Zagazig University et Elazhar University\\\\
+	\textbf{Journal} : International Journal of Computer Applications (0975 - 8887)
+- Volume 109 - No. 17\\\\
+	\textbf{Date de parution} : Janvier 2015\\\\
+	\textbf{Termes généraux} : Video Processing, Computer vision systems, Human detection and tracking, Clustering.\\\\
+	\textbf{Mots Clés} : Video Processing, Human detection and tracking,  Viola-Jones upper body, Skin detection, Computer vision systems, Biometrics.\\\\
+	\textbf{Lien} : \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.
+695.6435&rep=rep1&type=pdf}
+	
+\section{Situation des auteurs}
+Trois des auteurs ont étudiés dans le domaine du système de l’ingénierie informatique dont l’un a étudié à l’université de Elazhar. Abdalla Mahmoud a étudié l’ingénierie de communication. Cette thèse est un achèvement du travail de recherche qu’ils avaient commencé. Ils ont déjà publié deux articles scientifiques. L’un des articles traite d’un système de détection hybride de visage utilisant la combinaison de la méthode Viola-Jones et une méthode de détection de la peau. Le second article traite de la détection et l’analyse d’informations sur les parties d’un visage en utilisant Viola-Jones et une approche géométrique.
+
+\section{Introduction}
+Cette thèse traite d’une méthode scientifique totalement automatisé mis en place par les auteurs pour répondre à une problématique récurrente dans le domaine de l’interaction Homme-Machine : la détection et le traçages de personne. Plus précisément, ils travaillent sur la détection et le traçage de plusieurs personnes en mouvement sur une vidéo.
+
+\section{Méthode de détection}
+Leur méthode se découpe en 3 phases :
+	\begin{enumerate}
+		\item La première phase consiste à analyser la vidéo image par image et d’y
+appliquer un algorithme. Cet algorithme va appliquer des détecteurs
+primaires sur les images basé sur l’algorithme de détecteurs d’objets
+en cascade de Viola-Jones afin de détecter le haut du corps humain
+qu’il va placer dans une boîte.
+		\item Suite à la première phase, les auteurs ont récupéré des suites d’images
+contenantes des boîtes entourant le haut des corps humain détecter
+par l’algorithme. A l’aide des proportions anatomique du corps humain,
+ils vont parvenir à localiser la position de la tête et du visage
+dans la boîte. La résultat de cette étape retourne des détections d’humain
+positive et négative.
+		\item La troisième étape sert à identifier au mieux la différence entre les
+bonnes et les mauvaises détections. Pour cela, ils vont utiliser la détection
+de la couleur de peau sur la partie du visage qui a été localisé
+à l’étape 2.
+	\end{enumerate}
+		
+\section{Méthode de traçage}
+Le traçage se fait en répétant la méthode de détection sur chaque image
+de la vidéo. A chaque image, ils vont récupérer des informations sur les blocs
+valides de détections du haut du corps humain et en faire des moyennes de
+largeur et longueur du visage. Puis, ils qualifie les images en fonction de leurs
+moyennes via la méthode de classification (k-means). De cette manière, pour
+chaque image, ils détermine l’appartenance des blocs à une personne. On
+peut donc suivre les traces de cette personne.
+
+\section{Conclusion}
+Cette thèse est relativement complète et explique très bien le processus
+de détection. Cette méthode correspond parfaitement à mon sujet d’analyse
+de la satisfaction client via une vidéo puisque je vais avoir besoin de trouver
+une méthode de détection de personnes en mouvement sur une vidéo.
+
+\end{document}

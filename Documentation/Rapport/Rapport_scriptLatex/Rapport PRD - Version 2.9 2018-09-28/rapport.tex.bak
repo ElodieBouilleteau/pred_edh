@@ -1,0 +1,2013 @@
+\documentclass[11pt, french, research-development]{report-rd-info}
+%\documentclass[11pt, french, screen, research-development]{report-rd-info}
+   % - 11pt:  12pt peut être préférable pour faciliter la lecture sur les petits écrans, demander à l'encadrement
+   % - french:  à remplacer par english en cas de rédaction (exceptionnelle) en anglais
+   % - screen:  à enlever pour obtenir un rapport au format A4
+   % - research-development:  à remplacer par 'research' seul, ou 'development' seul, voire 'intelligence' en fonction de la demande du jury à l'issue du travail
+\usepackage[latin1]{inputenc}
+   % - latin9, utf8, etc.
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+
+% définitions propres au contenu actuel
+\usepackage{enumerate}
+\usepackage{amsmath, amssymb}
+\usepackage{algorithm}
+   \floatname{algorithm}{Algorithme}
+   \ifenglish
+      \renewcommand{\listalgorithmname}{List of Algorithms}
+   \else
+      \renewcommand{\listalgorithmname}{Liste des algorithmes}
+   \fi
+\usepackage{listings}
+   \lstset{backgroundcolor={\color{yellow}},
+           columns=fullflexible,
+           commentstyle={\color{blue}},
+           numbers=left,
+           numbersep=5pt,
+           numberstyle={\tiny},
+           stepnumber=1}
+\usepackage{algorithmic}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{url}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\newenvironment{typographie}{\begin{quote}\textbf{Typographie}. }{\end{quote}}
+\newenvironment{structuration}{\begin{quote}\textbf{Structuration}. }{\end{quote}}
+
+\newtheorem{theoreme}{Théorème}
+\newtheorem{preuve}{Preuve}
+
+\begin{document}
+
+\title{Analyse visuelle de la satisfaction client en magasin}
+\subtitle{Suivi de personnes dans une vidéo}
+\authorA{\'Elodie}{Bouilleteau}
+\supervisor{Nicolas}{Normand}
+   % Si plusieurs co-encadrants, alors utiliser la forme suivante~:
+   %    \cosupervisor{Alter}{Ego \& {\normalfont Jean} Cadre}
+\coordinator{Stéphane}{Gaudin}
+ % \institution{LS2N}
+   % - LS2N (fusion de l'ex LINA et de l'ex IRCCyN) pour un encadrement par les membres des équipes du département (voire d'autres équipes du LS2N) ;
+   % - XXX pour un encadrement dans le cadre d'un autre organisme
+   %   (il faut alors fournir dans le répertoire "logos" les fichiers correspondant~: XXX.pdf -- à défaut XXX.jpeg ou XXX.png -- pour pdflatex *et* XXX.eps pour latex) ;
+   % - commenter pour un encadrement qui relève d'un travail de recherche non affecté à une équipe.
+   % -  \theme{\'Equipe IPI}
+   % - à fournir dans le cas d'un laboratoire (DUKE, IPI ou RIO pour les équipes du département)
+   % - commenter autrement
+   % - ne peut pas être fourni si l'institution n'a pas été renseignée
+% \coinstitution{Centre national de la recherche scientifique}{CNRS}{1.7cm}
+   % - pour ajouter un partenaire
+   % - le logo doit correspondre au fichier déclaré, ici CNRS.pdf.
+   % - le troisième paramètre permet d'adapter la largeur du logo afin
+   %   de le rendre visuellement comparable à ceux mis par défaut (université de Nantes et
+   %   éventuellement laboratoire)
+\date{2 décembre 2018}
+   % - en français les mois ne prennent pas de majuscule (sauf si vous ne mettez pas le jour)
+   % - inutile de mettre un 0 devant les jours 1 à 9 du mois~!
+   % - le jour est peut-être même une précision inutile...
+
+%-------------------------------------------------------------------------------------------------------------
+
+\begin{abstract}
+\small
+Le sujet traité dans ce rapport est l'analyse de la satisfaction client à l'aide d'une caméra placé devant un stand en magasin. La problématique découlant de ce sujet est la détermination et le suivi de personnes dans une vidéo. La problématique a été volontairement simplifié à un domaine de recherche plus précis puisque le sujet englobe différents domaines comme la détection de visage ou encore la détection d'émotion.
+
+Les objectifs qui ont été fixés sont les suivants :
+\begin{itemize}
+	\item Déterminer les indicateurs pertinents d'analyse de la satisfaction
+	\item Déterminer les critères d'évaluations des méthodes
+	\item Trouver des méthodes de suivi
+	\item Création de la vidéo qui soit conforme au contexte attendu
+	\item Évaluer les méthodes de suivi sur la vidéo avec les critères d'évaluations définie plus tôt
+	\item Récupérer les résultats de la méthode et calculé les indicateurs  pertinents pour la satisfaction client (ex : nombre de temps moyen d'un client passé devant la caméra)
+	\item Faire une démonstration.
+\end{itemize} 
+
+Pour répondre à la problématique, les recherches se sont concentrées sur les méthodes / techniques de détection de personnes dans une image et de suivi de personnes dans une vidéo. Les méthodes abordées comptent parmi les plus performantes ou les plus récentes, mais ne possède pas de code source réutilisable. Nous recherchons avant tout une méthode dont le code source est réutilisable afin de faire nos propre évaluations via cette méthode.
+
+Suite à la recherche de documentations sur le domaine du suivi de personnes dans une vidéo, nous présentons 3 méthodes dont le code source est réutilisable et regardons les avantages et les désavantages de chacune des méthodes.
+
+%\small % À décommenter si le résumé est légèrement trop long pour tenir dans la page
+%Comme son nom l'indique, le résumé condense en \emph{quelques lignes} la \emph{totalité} du rapport.
+%Il faut donc décrire succinctement et successivement~:
+%\begin{enumerate}
+   %\item le sujet et la problématique~;
+   %\item les objectifs fixés~;
+   %\item les recherches effectuées~;
+   %\item les décisions prises~;
+   %\item les constructions conceptuelles~;
+   %\item les développements accomplis~;
+   %\item les expérimentations conduites, leurs résultats et leur interprétation~;
+  % \item les limites de ce travail~;
+   %\item les perspectives qu'il ouvre~;
+%\end{enumerate}
+%sans s'embarrasser de détails inutiles et en restant très vulgarisateur.
+%(L'introduction et la conclusion du rapport permettent de s'étendre.)
+\end{abstract}
+
+\begin{classification}
+Classification :
+Computing methodologies/Artificial intelligence/Computer vision/Computer vision tasks/Activity recognition and understanding
+Mots clés : vidéo, suivi de personne, comparaison de méthode de suivi, convolution...
+%\small % Idem
+   %Des éléments d'indexation bibliographiques \emph{doivent} être fournis.
+   %Ci-dessous est illustrée l'usage du thésaurus de l'ACM avec les catégories codifiées et des éléments d'indexation ouverts.
+   %Suivre le modèle de l'ACM~: cf.~\url{http://www.acm.org/class/1998/}
+   %\category{H.2.8}{Database Applications}{Image databases}
+   %\category{H.3.3}{Information Search and Retrieval}{Clustering, Information filtering, Relevance feedback}
+   %\category{H.3.7}{Digital Libraries}{User issues}
+   %\category{I.5.3}{Clustering}{Algorithms, Similarity measures}
+   %\category{I.4.10}{Image Representation}{Statistical, Multidimensional}
+   %\terms{Des mots clés couramment employés et très généraux sont à ajouter aux catégories. ex.~: Algorithms, performance, experimentation, human factors, verification.}
+   %\keywords{Des mots clés supplémentaires et très spécifiques peuvent être ajoutés. ex.~: Personnalisation, recherche d'images par le contenu, classification, rétro-action, apprentissage.}   
+\end{classification}
+
+
+\maketitle
+
+%-------------------------------------------------------------------------------------------------------------
+
+\begin{acknowledgements}
+
+Je tiens à remercier les personnes qui m'ont aidé tout au long de ce projet de recherche et de développement ainsi que les personnes qui m'ont conseillés pour la rédaction de ce rapport.
+
+\bigskip
+
+Tout d'abord, j'adresse mes remerciements à mon professeur et superviseur Nicolas NORMAND qui m'a conseillé et guidé pour la prise de décision et les recherches sur la problématique : suivi de personnes dans une vidéo.
+
+\bigskip
+
+Je tiens à remercier mon maître de contrat professionnel et coordinateur, Stéphane GAUDIN, pour ces nombreux conseils notamment de rédaction, et pour son soutien à mon égard.
+
+\end{acknowledgements}
+
+%-------------------------------------------------------------------------------------------------------------
+
+\newpage
+
+\tableofcontents
+
+%-------------------------------------------------------------------------------------------------------------
+
+\chapter*{Préambule}
+\addcontentsline{toc}{chapter}{Préambule}
+
+L'objet du rapport est de trouver une solution répondant à la problématique de suivi de personnes dans une vidéo, qui s'inscrit dans un sujet plus large de la satisfaction de la clientèle.
+
+\bigskip
+
+Cette solution pourra servir de base pour de future recherche comme sur la détection de visage ou d'émotion qui s'inscrive dans le sujet de la satisfaction client sur un stand en magasin.
+
+\bigskip
+
+Étant en contrat professionnel pour la dernière année d'étude à Polytech Nantes, je pouvais proposer un sujet venant de l'entreprise. Le sujet a été proposer par mon maître de contrat professionnel qui utilise l'opportunité du projet de recherche et développement comme un moyen d'analyser les possibilités de réponses déjà existante dans le domaine de suivi d'une personne dans une vidéo.
+
+\bigskip
+
+Ce sujet est une découverte pour moi, puisque je ne connaissais pas du tout les technologies de détection et de suivi personnes dans une vidéo. De plus, les réseaux neuronal convolutifs qui ont révolutionné ce domaine m'étaient inconnue.
+
+%Tous les paragraphes de ce document sont fournis~:
+%\begin{itemize}
+   %\item soit à titre d'illustration~;
+   %\item soit à titre d'explication.
+%\end{itemize}
+%En conséquence, rien ne doit en demeurer, si ce n'est la structure logique.
+
+%Un préambule est optionnel.
+%Il permet d'éclaircir le lecteur sur l'objet du rapport et du travail, son contexte et d'autres aspects périphériques au contenu lui-même (ex.~: les motivations de ce choix de sujet).
+
+%Ici, il nous permet de préciser~:
+%\begin{itemize}
+   %\item quelques points très généraux sur l'écriture d'un rapport, sujet de ce modèle~;
+   %\item de préciser, dans la mesure du possible, ce qui est attendu en différentes parties du rapport.
+%\end{itemize}
+
+%Tout d'abord, un document \emph{structuré} présente, comme l'indique l'épithète, une structure issue d'un travail d'organisation \emph{réfléchi}.
+%Cette organisation peut être propre à un travail particulier mais, le plus souvent, elle obéit à un modèle bien établi (ex.~: le format <<~thèse-antithèse-synthèse~>> d'une dissertation -- même si ce n'est pas le seul).
+
+%Pour un informaticien, cette structure correspond au concept bien connu d'arbre que l'on retrouve clairement dans la table des matières qui précède.
+
+%Il convient alors de distinguer les feuilles de l'arbre des n\oe uds internes ainsi que de la structure hiérarchique par elle-même.
+
+%Les feuilles portent les informations factuelles ou techniques, les séquences d'une démonstration, etc.
+%Bref, elles constituent le c\oe ur du rapport, le contenu à proprement parler.
+
+%L'arbre lui-même décrit l'organisation logique du raisonnement.
+%Dans le cas le plus simple, cela va des hypothèses à la conclusion, les imbrications correspondant à des niveaux de détails.
+%Dans d'autres cas, la structure hiérarchique traduit tant bien que mal des présentations plus pertinentes mais qui ne s'accommodent pas de la linéarité du texte.
+%Par exemple, certaines présentations nécessitent, pour être parfaitement claires, une organisation bidimensionnelle.
+%Il faut alors choisir de présenter ce tableau ligne par ligne, colonne par colonne ou encore blocs par blocs.
+%Lorsque ce genre de situation se présente, une explication préalable sur la logique <<~naturelle~>> et la logique de linéarisation adoptée est indispensable.
+%La fin de l'introduction, où se trouve placé le plan de l'étude, est l'endroit où justifier la logique de linéarisation.
+
+%Ainsi, les n\oe uds internes de cet arbre soulignent-ils seulement les étapes dans le développement des idées.
+%Chaque n\oe ud interne doit alors donner lieu à~:
+%\begin{itemize}
+  % \item une introduction au contenu de son sous-arbre~;
+  % \item une liaison entre les développements de chacune de ses branches~;
+   %\item une conclusion locale.
+%\end{itemize}
+%Cette structure, récursive de surcroît, amène à de nombreuses redites, mais à des niveaux de détails différents.
+%Elle est indispensable, car ce sont ces annonces, liaisons et récapitulatifs qui permettent au lecteur de savoir (i)~ce qui l'attend dans la suite et (ii)~à quel niveau il se situe à chaque instant.
+%L'usage rigoureux et discipliné de cette écriture <<~hiérarchique~>> dans le cadre réducteur d'une écriture réelle <<~linéaire~>> permettrait même de se dispenser de toute marque claire dans le texte.
+%(Certains ouvrages scientifiques ont effectivement été rédigés, à l'instar des romans, avec comme unique niveau de découpage le chapitre~!)
+
+%Nous en déduisons donc que les titres de chapitres, sections, etc., ne sont \emph{pas} du texte.
+%Il s'agit exclusivement de délimiteurs visuels qui soulignent à leur façon les niveaux hiérarchiques.
+%Dans le cours d'une lecture normale, \emph{l'\oe il les saute}.
+
+%Il est donc interdit d'utiliser un pronom qui fait référence au contenu d'un titre.
+%Par exemple, après une section intitulée <<~Base de données~>> (on notera l'absence d'article), le paragraphe suivant ne commencera jamais par <<~Elle [...]~>> mais bien par <<~La base de données [...]~>>.
+
+%\begin{typographie}
+%Soulignons aussi que des règles typographiques de mise en page et de mise en forme existent.
+%Certaines d'entre-elles concernent la numérotation, la taille, la graisse, etc., des titres.
+%Il se trouve que le système de publication \LaTeX, utilisé pour ce même document, les respectent, sous une forme conventionnelle et sobre que vous constatez \emph{de visu}.
+%En cas d'utilisation d'un autre outil de rédaction de texte électronique, il faut forcer ce dernier à respecter des règles analogues (\emph{via} des feuilles de style de préférence mais pas nécessairement celles fournies par défaut...car elles sont généralement aux normes américaines).
+
+%Dans la suite, nous ajouterons encore aux recommandations sur la technique de construction du rapport lui-même des remarques sur les règles typographiques au sens large, même si elles nécessiterait une présentation dédiée.
+%\end{typographie}
+
+%Dans la suite, certaines parties de ce pseudo rapport ont été rédigées d'une manière très proche de la forme finale.
+%En revanche, d'autres parties ne donnent que des indications très grossières, voire seulement des exemples (mis en italique), car leur contenu est très dépendant de la nature du sujet et des résultats.
+
+%Faisons une dernière recommandation, qui va de soi mais sur laquelle il convient d'insister néanmoins~: il faut rédiger en français.
+%Cela englobe la correction orthographique (les erreurs orthographiques sont \emph{totalement} inacceptables), grammaticale et... l'absence de franglais~!
+
+%Le lecteur pourra trouver nombre d'autres sources pour apprendre à rédiger des documents scientifiques \cite{Wolfe}.
+
+%-------------------------------------------------------------------------------------------------------------
+
+\chapter{Introduction}
+
+L'introduction générale traite de la problématique du sujet qui va être développée dans ce rapport, les objectifs plus précis que l'on s'est fixés, le travail qui a été réalisé et les contributions associés.
+La dernière section de l'introduction détaillera l'organisation logique du rapport et présentera ses différents chapitres.
+
+\section{Présentation de la problématique}
+
+L'analyse de la satisfaction client en magasin s'inscrit dans un contexte plus large du groupement Système U. Pour un contexte économique tendu, le groupement Système U ambitionne de gagner des parts de marchés pour atteindre 12.5\% en 2022.
+
+Selon une étude Gartner, 64 \% des consommateurs considèrent désormais l'expérience en magasin comme étant plus importante que le prix du choix de l'enseigne.
+
+\bigskip
+
+\'Etudié l'analyse de la satisfaction client en magasin correspond dans ce contexte à simuler un stand d'animation d'un magasin, qui serais filmé afin de mesurer des indicateurs de la satisfaction client. La matérialisation de ce stand en magasin peut être réalisée avec l'installation d'une caméra sur une table. La caméra filme le passage de personnes devant la table.
+
+\bigskip
+
+La problématique étudié dans ce rapport est l'analyse de la satisfaction client dans une vidéo où l'on aperçois le passage de client devant un stand d'un magasin. Cette problématique soulève de nombreuses réflexions sur les méthodes de détection que nous pouvons utiliser. 
+
+La problématique donné est trop vaste pour un sujet de projet de recherche et développement de 5 ème année en informatique. Avec mon superviseur et mon coordinateur, nous avons décidés de restreindre la problématique à la détection et au suivi de personnes dans une vidéo.
+
+\bigskip
+
+Les principaux indicateurs pertinents que nous pouvons obtenir avec la détection et le suivi de personnes dans une vidéo sont :
+\begin{itemize}
+	\item Le nombre de personnes différentes vu dans la vidéo,
+	\item L'arrêt de la personne dans la vidéo,
+	\item Le temps moyen de passage d'une personne dans la vidéo,
+	\item Le rapprochement de la personne par rapport à l'emplacement du stand.
+\end{itemize}
+
+Ces indicateurs seuls ne permettent pas de déterminer une valeur de satisfaction client pertinente. Cependant, si on associe ces indicateurs à un questionnaire d'analyse sur la satisfaction client, il est possible d'y ajouter des informations complémentaires pouvant se révéler utile. De plus, à l'avenir, on peu imaginer de nouveaux modules complémentaires qui viendrons enrichir l'existent issu de cette recherche basé sur le suivi de personnes. Ces modules pourrons être :
+\begin{itemize}
+	\item La détection de visage,
+	\item La détection d'émotion,
+	\item La détection de caractéristique d'une personne (âge, genre...).
+\end{itemize} 
+
+\bigskip
+
+Nous pouvons découper la problématique de détection et suivi d'une personne en plusieurs sous-problème. Le premier problème qui se pose est l'analyse de vidéo image par image. Comment détecter et reconnaître une personne ? Il s'agit du suivi de personne. Le deuxième problème soulevé est la mesure des indicateurs pertinents. Comment peut on mesurer ces indicateurs avec la sortie d'un algorithme de suivi de personnes ?.
+
+\section{Contexte}
+
+Cette partie me permet de présenter en détails le contexte dans lequel évolue le projet.
+
+Le contexte du projet est d'analyser une vidéo prise dans un magasin et qui filme le devant d'un stand. Deux questions se posent : Où le stand doit-il être placer dans le magasin pour que le suivi de personnes sur la vidéo soit optimale ? Comment la vidéo d'évaluation doit-être prise afin de correspondre au contexte ?
+
+Pour répondre à ces deux questions, nous émettons des hypothèses sur le placement du stand. La première hypothèse est que le stand soit placer dans un rayon du magasin là où il y a le plus de passant, ensuite la deuxième hypothèse consiste à se dire que la caméra ne doit observer seulement les passant qui passe devant le stand donc celle-ci doit être placé de telle sorte qu'on n'observe pas autre chose que les personnes passées devant la caméra. De plus, il faut évité un arrière fond où l'on verrais des personnes d'un autre stand ou d'une file d'attente, cela pourrait nuire à la détection.
+
+La vidéo d'évaluation doit être prise avec une caméra classique (webcam) fixe à l'intérieur d'un bâtiment et éclairer d'une lumière artificielle afin de correspondre au mieux au contexte du sujet.
+
+\section{Objectifs poursuivis}
+
+Cette partie permet de définir les objectifs liés à la problématique. Nous verrons à la fin s'ils ont été atteints.
+
+\bigskip
+
+L'objectif principal poursuivi est de déterminer les critères d'évaluations des propositions trouvés. Une fois, les critères déterminés, notre prochain objectif est de trouvé un algorithme/une méthode de suivi de personnes.
+
+\bigskip
+
+Une fois les méthodes récupérer et implémenter, notre objectif est de les évaluer sur une vidéo qui tient compte du contexte. La vidéo devra être crée au préalable et devra être filmé selon des critères bien précis définie dans la partie contexte.
+
+Nous prendrons la méthode ayant les meilleurs résultats de performance.
+
+A l'aide des résultats de cette méthode, on pourra calculer les indicateurs de la satisfaction client.
+Par exemple, on peut imaginer avoir en sortie un tableau avec en lignes les identifiants des clients qui sont passé devant la caméra et en colonne le nombre de frame où l'on voit le client sur la vidéo. On peut en déduire avec le nombre de frame total de la vidéo et la durée de la vidéo, le temps moyen de passage devant la caméra par personne ainsi que le nombre de personnes différentes qui sont passé devant la caméra.
+
+\bigskip
+
+Le dernier objectif est de faire une démonstration des résultats de l'analyse de la vidéo.
+
+\section{Travail réalisé}
+
+Dans cette partie, je vais expliquer le travail que j'ai réaliser tout au long de ce projet.
+
+Tout d'abord, mon premier travail a été la compréhension du sujet, ce qui a aboutit à un réajustement du sujet afin de trouver une problématique adaptée.
+
+Ensuite, après avoir déterminer le sujet plus précisément, j'ai rechercher des articles sur la détection et le suivi de personnes dans une vidéo afin de pouvoir répondre à la problématique.
+Cette recherche a aboutit sur la présentation des grandes méthodes de détection et de suivi utilisé et crée par les chercheurs.
+
+Une fois les recherches fini, j'ai regarder l'existence de 3 propositions faites par des chercheurs ou étudiant sur le suivi de personnes dans une vidéo. J'ai analyser les propositions et les est comparer entre elles avant de pouvoir les tester afin de savoir si ces méthodes sont performantes sur une vidéo tenant compte du contexte du sujet.
+
+Le but que je poursuit pour la suite est d'évaluer les 3 propositions sur la vidéo et de calculer des indicateurs pertinents de la satisfaction client.
+%Atteindre le but poursuivi ne peut se faire qu'en se fixant une ligne de travail, en émettant des hypothèses, éventuellement des probabilités de réussite ou d'échec -- auquel cas il faut prévoir des solutions de repli -- et des étapes dans la réalisation.
+
+%Cette partie sera mise à jour au fur et à mesure de l'avancement du travail, le titre de la section devant être à l'origine <<~Travail à réaliser~>> mais correspondant bien à <<~Travail réalisé~>> à la fin de la rédaction du rapport.
+
+\section{Contribution}
+
+Pour l'instant, l'évaluation n'ayant pas encore été effectué, je ne peut monter de résultat.
+%Il ne faut jamais laisser patienter le lecteur jusqu'à la fin du rapport pour connaître les résultats, positifs aussi bien que négatifs, de ce travail.
+%Les contributions et conclusions sont donc clairement présentées dès ce chapitre d'introduction~!
+
+\section{Plan de l'étude}
+
+%Une fois qu'un survol relativement précis de l'ensemble du travail a été réalisé, il convient d'entrer dans les détails pour le lecteur désireux de poursuivre la lecture du rapport.
+
+%La logique d'ensemble de l'organisation du rapport est précisée si la simple lecture continue de chapitres ne s'impose pas d'elle-même.
+%Chaque chapitre donne alors lieu à une description succincte.
+%Le but de ces quelques paragraphes est de fournir une vue générale du rapport sans avoir à lire l'introduction de chaque chapitre séparément.
+
+%Très grossièrement, le découpage de base se répartit entre la recherche de solutions plus ou moins complètes à des problèmes similaires, voire au problème lui-même et le développement d'une (nouvelle) solution, éventuellement partielle elle-même.
+Dans cette partie, nous allons vous présenter le plan d'étude du rapport. Pour la première partie du projet de recherche et développement, le plan se limite à l'état de l'art et les propositions issus de l'état de l'art.
+
+Le chapitre~\ref{chap:EtatArt} étudie un ensemble de propositions de la littérature scientifique qui porte sur la problématique de suivi de personnes dans une vidéo. L'analyse conjointe de ces dernières permet de dresser un bilan de l'état de l'art et de proposer des pistes de recherches.
+
+%Le chapitre~\ref{chap:Propositions} étudie, d'un point de vue théorique, la ou les pistes les plus prometteuses.
+%Les implications des hypothèses de travail sont développées jusqu'au point où seule l'expérimentation permettra de trancher.
+
+%Le chapitre~\ref{chap:Experimentations} engage dans la voie du développement suivi des expérimentations et de l'analyse des résultats obtenus.
+
+La conclusion permet de synthétiser les apports de ce travail et d'ouvrir des voies d'investigations supplémentaires.
+
+%-------------------------------------------------------------------------------------------------------------
+
+% \part{\'Etat de l'art} % À décommenter si l'état de l'art nécessite plusieurs chapitres.
+                         % Ce sera le cas si l'état de l'art est riche, où l'on distinguera un chapitre de présentation d'un chapitre critique.
+                         % Il faudra aussi décommenter la partie sur le travail réalisé
+% \label{part:EtatArt}
+
+\chapter{\'Etat de l'art}
+\label{chap:EtatArt}
+
+L'objectif de cette partie est d'étudier l'état des connaissances qui permettent d'aider à la résolution des sous-problèmes de détection et de suivi d'individu sur une vidéo. Le sous-problème de suivi d'un individu est lié au sous-problème de détection et de reconnaissance d'un individu d'une image à une autre de la vidéo.
+
+A notre connaissance, les études mener sur la \textbf{détection de personnes} qui appartient au domaine de la vision par ordinateur ont commencer à la fin des années 1990. La détection de personnes est une méthode spécifique de la détection d'objet. Elle consiste à détecter la présence d'un humain et sa localisation dans une image numérique. En règle général, la détection de personne se fait en détectant des humains posant debout ou en train de marché.
+
+La variabilité d'apparence des êtres humains, l'articulation du corps humain, l'occultation par des objets ou par d'autres humains sont des éléments qui rende la détection de personnes très difficile. De plus, Les données d'entrées (images et vidéos) sont rarement de bonne qualité, ce qui rajoute encore une difficulté. La problème que pose cette méthode de détection de personne est de trouver une représentation des humains ni trop générique mais assez discriminante pour n'observer que des humains et ne pas confondre les humains de l'image avec d'autres objets.
+
+L'une des premières méthodes proposées est la détection d'objets en utilisant une transformée de Hough sur plusieurs images pris de différent point de vue. La transformée de Hough est une technique utilisé lors du pré-traitement d'image numérique pour reconnaître les formes. Cette méthode permet de détecter des piétons, mais n'est pas exclusive au piéton. En 1998, \cite{HeiseleAndWohler} Heisele et Wöhler conçoivent une méthode de détection et de classification à l'aide des mouvements des jambes des piétons par rapport au sol. Ces méthodes sont cependant spécifique et ne sont pas générique.
+
+A partie des années 2000, les méthodes de détection de personnes ont évoluer avec l'arrivée de la méthode de Viola-Jones \cite{ViolaJones}, qui est étendu en 2005 à la détection de personne en utilisant le mouvement. La méthode de Viola-Jones détecte les objet visuel rapidement et possède un taux de précision élevé.
+
+Lorsque les réseaux neuronal convolutif ont été découvert, cela à permit une avancer fulgurante dans le domaine de la reconnaissance d'image et de vidéo. Les réseaux neuronal convolutif sont performants et rapide, c'est pourquoi les dernières méthodes de détection utilise ces réseaux. Depuis l'utilisation de ces réseaux de neurones dans le domaine de la détection d'objet en 2013, la moyenne de précision a augmentée. Elle est supérieur à 50 \%.
+
+\bigskip
+
+Le réseaux neuronal convolutif est un réseau inspirer du cerveau humain et notamment du lien entre les yeux et le cerveau. Tout humain bien constituer possède des yeux et un cerveau. Lorsqu'une personne regarde une image, elle sait reconnaître un objet dans cette image. Si la personne regarde une vidéo, elle peut suivre du regard un objet en particulier car elle sait le reconnaître image par image et associer les objets de chaque image entre elles. Il s'agit de quelques choses d'instinctif, de naturel chez l'homme.
+
+Le réseau neuronal convolutif fonctionne sur le même principe. L'objectif est d'apprendre à reconnaître un objet dans une image. Pour cela, le réseau contient plusieurs couches de neurone.
+
+LeNet \cite{LeNEt} est le premier petit réseau neuronal convolutif fonctionnelle. Il est utiliser pour reconnaitre des chiffres écrit à la main. LeNet a été crée en 1990 par LeCun et al. La structure du réseau neuronal convolutif de LeNet est composé de 5 couches : 2 fois une couche de convolution suivi d'une couche de regroupement et d'une couche entièrement connectée.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{Images/LeNet.png} 
+ 	\caption{Architecture de LeNet (Source~: <<~\emph{Graphics in 	Gradient-based learning applied to document recognition}~>>, page~7)}
+   	\label{fig:LeNet}
+\end{figure}
+
+Les couches entièrement connectées sont constituées de poids. A une paire de valeur d'entrée et de sortie, on associe un poids. Il faut savoir que le nombre de paramètres augmente rapidement. 
+
+Les couches convolutives consiste en un ensemble de filtres qui capture une certaine structures dans l'image. Une fois qu'un filtre a appris à capturer une certaine structure, il est capable de la trouver n'importe où dans l'image, car le filtre sera appliqué à toutes les positions, pixels de l'image.
+
+Les couches de regroupement permette de réduire la taille des données. Le regroupement est effectué pour chaque valeur d'entrée. Le regroupement maximum, par exemple, récupère la valeur maximum pour une valeur d'entrée.
+
+Pour le réseau neuronal convolutif LeNet, la première couche de convolution cherche une première structure dans l'image puis on regroupe les structures trouvées à l'aide deuxième couche de regroupement. La troisième couche de convolution trouve de nouvelles structure dans l'image regrouper et regroupe ces structures avec la cinquième couche de regroupement. La dernière couche entièrement connectées récupère les valeurs des structures regrouper et en conclu une valeur chiffré.
+
+\bigskip
+
+La résolution du problème de détection d'objet (boîte de détection et localisation) dans une image avec un simple réseau neuronal convolutif standard ne fonctionnera pas car on ne connaît pas à l'avance le nombre d'occurrences d'objets présent dans l'image. Et donc, on ne peut pas fixer la valeur de la couche de sortie du réseau.
+
+Une première solution à ce problème serait de récupérer différentes régions d'intérêt et d'utiliser un réseau neuronal convolutif sur ces régions pour classifier la présence ou non d'un objet dans ces régions. le problème de cette approche est qu'un objet peut avoir différentes localisation dans une images et donc, il faudrait sélectionner un nombre de régions d'intérêts élever, ce qui prendrait beaucoup trop de temps.
+
+\bigskip
+
+A notre connaissance, voici les 4 méthodes principales de détection d'occurrence d'objet utilisant un réseau neuronal convolutif qui soit relativement rapide et efficace :
+
+\bigskip
+
+1. \textbf{R-CNN} :
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{Images/R-CNN(1).png} 
+ 	\caption{Architecture simplifié du R-CNN (Source~: <<~\emph{Graphics in Rich feature hierarchies for accurate object detection and semantic segmentation}~>>, page~1)}
+   	\label{fig:R-CNN(1)}
+\end{figure}
+
+Ross Girshick et al. \cite{RCNN} ont proposer une méthode de classification d'objets que l'on peut séparer en 3 partie.
+
+Dans la première partie, ils utilisent la recherche sélective pour extraire 2000 régions proposer de l'image. Au lieu de classifier un grand nombre de régions, on classifie seulement 2000 régions.
+
+Dans la deuxième partie, ils transforment les 2000 régions en une région candidate. Cette région candidate passe dans un réseau neuronal convolutif qui extrait les caractéristiques de l'image et donne en sortie un vecteur de caractéristique de dimension 4096. Ils ont utilisé l'implémentation Caffe du réseau neuronal convolutif décrit par Krizhevsky et al \cite{ImageNet}.
+
+Dans la dernière partie, ils ingèrent les caractéristiques dans un SVM (un séparateur à vaste marge) afin de classifier la présence d'un objet dans la région proposer. Un séparateur à vaste marge est une technique d'apprentissage supervisé destinée à résoudre des problèmes de discrimination et de régression. L'algorithme prédit également 4 valeurs qui permettent d'augmenter la précision du cadre de sélection.
+
+Par exemple, l'algorithme prédit la présence d'une personne, mais la tête de cette personne dans la région proposer peut être couper en deux. L'intérêt est que les 4 valeurs de décalage prédit permette d'ajuster le cadre de sélection.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{Images/R-CNN.png} 
+ 	\caption{R-CNN (Source~: <<~\emph{Graphics in 			Rich feature hierarchies for accurate object detection and semantic segmentation}~>>)}
+   	\label{fig:R-CNN}
+\end{figure}
+
+La partie apprentissage de la méthode R-CNN prend énormément de temps puisque l'on doit classifier 2000 régions par image. Elle ne peut pas être implémenter en temps réel car elle a une vitesse de test de 47 secondes par image.
+
+\bigskip
+
+2. \textbf{Fast R-CNN} :
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{"Images/Fast R-CNN".png} 
+ 	\caption{Fast R-CNN (Source~: <<~\emph{Graphics in Fast R-CNN}~>>,page~2)}
+   	\label{fig:Fast R-CNN}
+\end{figure}
+
+La méthode Fast R-CNN \cite{FastRCNN} est réalisée par les mêmes auteurs que la méthode R-CNN. Ils voulaient corriger le problème de lenteur d'apprentissage de l'ancienne méthode.
+
+La méthode se déroule en 3 partie :
+
+La première étapes consiste à ingérer dans un réseau neuronal convolutif l'image complète et en sortir un tableau de caractéristiques de convolution (un tableau qui contient les caractéristiques nécessaire à a détection d'un objet). Par exemple, on veut détecter un vélo. Dans le réseau, on va d'abord détecter les courbes, puis les associées pour avoir des cercles et enfin, avec le tableau de caractéristiques remplis de cercles et de traits, on détecte le vélo.
+
+La deuxième étape consiste à identifier les régions de propositions à partir du tableau de caractéristique fournit en sortie. Les régions d'intérêts sont dimensionnées en taille fixe caréé avec la couche de regroupement des régions d'intérêts (RoI pooling layer) afin qu'elles puissent être insérer dans la couche entièrement connecter.
+
+La troisième étape consiste à récupérer le vecteur de caractéristiques de chaque région. A l'aide de ce vecteur, on prédit la classe de la région proposer avec la couche contenant la fonction softmax utiliser pour la classification multiple et on prédit les valeurs de décalage pour le cadre de sélection.
+
+La méthode Fast R-CNN est plus rapide que R-CNN car on n'insère pas les 2000 régions dans le réseaux de neurone mais on insère toute l'image.
+
+\bigskip
+
+3. \textbf{Faster R-CNN} :
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{"Images/Faster R-CNN".png} 
+ 	\caption{Faster R-CNN (Source~: <<~\emph{Graphics in Faster R-CNN: Towards Real-Time Object}~>>,page~3)}
+   	\label{fig:Faster R-CNN}
+\end{figure}
+
+Faster R-CNN \cite{FasterRCNN} est une méthode crée par Shaoqing Ren et al.
+La différence entre cette méthode et les deux méthodes R-CNN et Fast R-CNN est que les deux méthodes utilise la recherche sélective pour trouver les régions d'intérêts, cependant cette méthode laisse le réseaux trouver les régions d'intérêt sans la recherche sélective.
+
+La méthode peut se séparer en 3 partie :
+
+La première partie sert à insérer l'image dans un réseau neuronal convolutif et à en tirer un tableau de caractéristiques.
+
+La deuxième partie consiste à utiliser un autre réseaux neuronal convolutif pour déterminer les régions d'intérêts. 
+
+La troisième partie permet de remodeler les régions régions d'intérêts via une couche de regroupement RoI (region of interest). Les nouvelles régions sont utilisées pour prédire la classe des régions d'intérêts et prédire les valeurs de décalage pour le cadre de sélection.
+
+Cette méthode est plus rapide que les précédentes et permet de faire de la détection en temps réel.
+
+\bigskip
+
+4. \textbf{YOLO} :
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.30]{"Images/YOLO".png} 
+ 	\caption{YOLO (Source~: <<~\emph{Graphics in You Only Look Once: Unified, Real-Time Object Detection}~>>,page~2)}
+   	\label{fig:YOLO}
+\end{figure}
+
+La méthode You Look Only Once \cite{Yolo} n'utilise pas de régions proposées dans son réseau neuronal convolutif contrairement aux méthodes précédentes. Dans cette méthode, seul un réseau neuronal convolutif prédit les régions boîtes englobante et les probabilité de prédiction d'appartenance à une classe pour chacune des boîtes.
+
+YOLO prend une image en entrée et la sépare en une grille de SxS. Chaque case de la grille propose m boîtes englobantes. Pour chacune des boîtes englobantes, le réseaux calcule une probabilité d'appartenance à une classe ainsi que les valeurs de décalage de la boîte englobante. Les boîtes englobantes ayant une valeur de probabilité supérieur à un certain seuil sont sélectionner pour localiser l'objet dans l'image.
+
+L'inconvénient de cette méthode est qu'elle ne peut pas détecter de petit objet (tel des oiseaux).
+
+\bigskip
+
+Les méthodes de détection d'objet sont efficace mais ne réponde seulement qu'à la moitié de la problématique reformulé qui est la détection et le suivi de personnes dans une vidéo. Le suivi de personne se fait avec une ré-identification du client image par image. La différence avec la simple détection de personne est que nous analysons une vidéo et non plus une seule image. Les algorithmes de détection d'objet dans une image numérique ne sont pas suffisant pour répondre à notre problématique.
+
+\bigskip
+
+Après avoir présenter une vision général de quelques méthodes sur la détection d'objet dans une image numérique. On va s'orienter sur le deuxième sous-problème de suivi de personne image par image. Suivre le client image par image est important pour pouvoir identifier un client et connaître son nombre de passage, son temps moyen de passage dans la vidéo. En terme général, avoir le suivi des personnes permet de récupérer un indicateur sur le nombre d'individu différent qui est passer devant la caméra avec plus ou moins d'erreurs possible.
+
+Faire un état de l'art sur toutes les méthodes de suivi d'individu est difficile car depuis les années 2000, ce domaine est en pleine expansion et chacun réinvente une nouvelle méthode ou en modifie une déjà existante. Il est difficile de faire une liste concrète et complète des méthodes créer au fil du temps. De plus, il est compliquer de connaître la date exacte de modification effectuées sur ces méthodes.
+
+\bigskip
+
+Il existe 2 type de méthode de suivi : les méthodes en ligne qui reçoivent les données image par image et les méthodes hors ligne qui reçoivent toute la vidéo et peuvent donc utiliser des méthodes de prédiction pour prédire l'emplacement de l'objet à la prochaine image en fonction de toutes les images précédentes.
+
+\bigskip
+
+D'après l'article "Tracking the Trackers:An Analysis of the State of the Art in Multiple Object Tracking" \cite{EtatArt}, qui compare les différentes méthodes de suivi de personnes dans une vidéo. Avoir une base de données normalisé de comparaison de méthode de suivi est essentiel. 
+
+Dans cet article, les auteurs comparent les 10 premières méthodes de suivi issus des classements d'une base de données MOT (Multiple Objet Tracking). Ces méthodes possèdent les mesures de performances les plus élevés. MOT MOT15 et MOT16 sont des bases de données de vidéos de 2015 et 2016 sur lesquelles certaines méthodes de suivi se sont entraîner et ont été tester.
+
+\bigskip
+
+Il y a deux type d'approche pour le suivi de personnes. La première consiste à associer deux images entre elles. Il s'agit de l'association de données. Cette approche a été utilisé principalement avant 2015. L'objectif est de trouver une solution optimale pour résoudre le problème d'association de données.
+
+Voici quelques méthodes présenté dans l'article qui utilise l'association de données comme approche :
+\begin{itemize}
+	\item DP-NMS \cite{DPNMS} : modèle graphique qui relie les détections dans un ensemble cohérent de trajectoires résolue via l'algorithme des k plus court chemins. La figure 2.7 représente l'architecture de cette méthode. On y trouve un n\oe{}ud début (S), un n\oe{}ud fin (T), 3 images successives. Les liens rouge représente le lien entre l'image sans détection et l'image avec les détections spatio-temporel de chaque objet. Les liens bleu représente l'association entre les objets de deux images successive.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.60]{"Images/DP-NMS".png} 
+ 		\caption{Architecture DP-NMS (Source~: <<~\emph{Graphics in Globally-optimal greedy algorithms for tracking a variable number of objects}~>>,page~4)}
+   		\label{fig:DP-NMS}
+	\end{figure}
+	\item LP2D \cite{LP2D} : modèle linéaire résout avec l'algorithme du simplex. La figure 2.8 correspond à l'architecture de la méthode LP2D. Dans un graphe orienté , où 6 n\oe{}uds bleu correspondent à un objet de l'image et sont représenter par un n\oe{}ud début et fin, où le n\oe{}ud source (t) est relié à tous les objets "fin", où le n\oe{}ud suivant (t) est relié à tous les objets "début", on a une association entre l'objet de l'image t-1 et les objets de l'image t. 
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.40]{"Images/LP2D".png} 
+ 		\caption{Architecture LP2D (Source~: <<~\emph{Graphics in Everybody needs somebody: Modeling social and grouping behavior on a linear programming multiple people tracker}~>>,page~3)}
+   		\label{fig:DP-NMS}
+	\end{figure}
+	\item DCO-X \cite{DCOX} modèle utilisant un champ conditionnelle aléatoire.
+	\item OVBT \cite{OVBT} : modèle bayésien variationnelle.
+	\item SMOT \cite{SMOT} : modèle de mouvement. Le mouvement permet de distinguer les objets ayant la même apparence.
+\end{itemize}
+
+L'association de données avec ces modèles sont basé sur des distances simples entre les données de détection des deux images ou des liens d'apparence faible. Ces modèles ne sont pas très performants.
+
+\bigskip
+
+La deuxième approche traiter par les auteurs de l'article de comparaison des méthodes de suivi de personnes, est la méthode d'affinité et d'apparence. 
+
+Récemment, on voit apparaître la construction de coût de similarité entre paire robuste basé sur des indices d'apparence fort. Les traqueur ont de meilleures performances et peuvent analyser des scénarios plus complexe.
+
+Voici les 6 meilleurs méthodes présenté dans l'article qui utilise l'affinité et l'apparence comme approche :
+\begin{itemize}
+	\item LINF1 \cite{LINF1}  : modèle d'apparence clairsemé. La figure 2.9 représente l'architecture de la solution LINF1. La première étapes consiste à calculer les "représentation" des détections à partir de la dernière image. (Cela correspond au rond rouge). La deuxième étapes consiste à lié les "représentation" des détections de chaque image entre elles via une formule d'optimisation d'un paramètre E. La dernière étape consiste à définitivement estimé les trajectoires des détections dans la première image de la fenêtre glissante. (Les rectangles vert).
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.50]{"Images/LINF1".png} 
+ 		\caption{Architecture LINF1 (Source~: <<~\emph{Graphics in Improving Multi-frame Data Association with Sparse Representations for Robust Near-online Multi-object Tracking}~>>,page~4)}
+   		\label{fig:LINF1}
+	\end{figure}
+	\item MHT-DAM \cite{MHTDAM} : modèle de mise à jour d'apparence en ligne. La figure 2.10 représente l'architecture de la méthode MHT-DAM. L'étape 1 consiste à suivre un ensemble d'hypothèse après le déclenchement du test au temps k. L'étape 2 consiste à récupérer les zone de contrôles des hypothèses de k+1 sur l'image k avec des seuils différents. L'étape 3 consiste à construire des arbres d'hypothèses correspondant. Chaque n\oe{}ud est associé à une observation dans k. La dernière étape n'est pas présente dans la figure. Elle consiste à choisir le meilleur chemin dans l'arbre.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.40]{"Images/MHT-DAM".png} 
+ 		\caption{Architecture MHT (Source~: <<~\emph{Graphics in Multiple Hypothesis Tracking Revisited}~>>,page~3)}
+   		\label{fig:MHT-DAM}
+	\end{figure}
+	\item oICF \cite{oICF} : modèle d'apparence de fonction de canal intégrés. La figure 2.11 représente l'architecture de la méthode oICF.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.40]{"Images/oICF".png} 
+ 		\caption{Architecture oICF (Source~: <<~\emph{Graphics in Online multi-person tracking using Integral Channel Features}~>>,page~4)}
+   		\label{fig:oICF}
+	\end{figure}
+	\item NOMT \cite{NOMT} : modèle de flux local agrégé de trajectoires de points d'intérêt à long terme. La figure 2.12 représente l'architecture de la méthode NOMT.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.40]{"Images/NOMT".png} 
+ 		\caption{Architecture NOMT (Source~: <<~\emph{Graphics in Near-Online Multi-target Tracking with Aggregated Local Flow Descriptor}~>>,page~2)}
+   		\label{fig:NOMT}
+	\end{figure}
+	Les modèles suivant utilise les réseaux neuronales.
+	\item MDPNN16 \cite{MDPNN16} : modèle exploitant les réseaux de neurones récurrents pour coder l'apparence, le mouvement et les interactions. La figure 2.13 représente l'architecture de la méthode MDPNN16.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.40]{"Images/MDPNN16".png} 
+ 		\caption{Architecture MDPNN16 (Source~: <<~\emph{Graphics in Tracking the Untrackable: Learning to Track Multiple Cues with Long-Term Dependencies}~>>,page~3)}
+   		\label{fig:MDPNN16}
+	\end{figure}
+	\item JMC \cite{JMC} : modèle utilisant l'appariement profond pour améliorer la mesure d'affinité.  La figure 2.14 représente l'architecture de la méthode JMC.
+	\begin{figure}
+		\centering
+		\includegraphics[scale=0.50]{"Images/JMC".png} 
+ 		\caption{Architecture JMC (Source~: <<~\emph{Graphics in Multiple People Tracking by Lifted Multicut and Person Re-identification}~>>,page~3)}
+   		\label{fig:JMC}
+	\end{figure}
+\end{itemize}
+
+L'utilisation de réseaux neuronal augmente grandement les performances. Les méthodes présenter dans cet état de l'art ne sont pas toutes pertinentes seuls les dernières utilisant les réseaux de neurones le sont.
+
+\bigskip
+
+Je vais vous présenter un algorithme nommé SORT - Simple Online Real-time Tracking \cite{Sort} qui permet de traquer les personnes en temps réel dans une vidéo. Cette algorithme sert de base pour 2 des propositions suivantes.
+
+La méthode consiste en des composants clés de détection, propagation d'états d'objet dans les images futurs, association des détections actuelles aux objets existants et gestion de la durée de vie des objets suivis.
+
+Elle utilise le méthode de détection Faster Region CNN \cite{FasterRCNN} qui consiste à extraire des caractéristiques des régions proposés puis de classer ces régions.  Le filtre de Kalman est utilisé pour prédire les états des objets dans l'image suivante. L'association entre les cibles existantes et les détections est résolu en estimant pour chaque cible les cadres de sélection de chaque cible dans l'image actuelle. Ensuite, une matrice de coût des affectations est ensuite calculée en tant que distance d'intersection sur l'union (IOU) entre chaque détection et tous les cadres de sélection prévus des cibles existantes.
+
+\bigskip
+
+L'état de l'art permet d'avoir une vision plus ou moins générale des méthodes utiliser pour la détection et le suivi de personnes des plus anciennes au plus performantes.
+
+Notre problématique est de trouver une méthode de suivi de personnes qui soit performantes et récente puis de calculer des indicateurs plus ou moins pertinents vis-à-vis de la satisfaction client avec les résultats de sortie de la méthodes.
+
+La plupart des solutions présentent dans l'état de l'art ne possède pas de code source, ce qui rend difficile la tâche d'intégration de la méthode à ce projet. Nous avons besoins d'une méthode de suivi de personnes qui soit récente, performante et dont le code est réutilisable.
+
+\bigskip
+\section{Critères d'évaluation}
+
+Avant de détailler les 3 propositions, nous avons déterminé des critères d'évaluation qui permettront d'évaluer les propositions sur une vidéo de test enregistrer au préalable issu du MOTChallenge qui est un site contenant des données de test de vidéo annoté pour tester les différents algorithmes de suivi de personnes.
+
+Les critères d'évaluation des propositions retenus sont :
+
+\begin{itemize}
+	\item FP : le taux de faux positifs est le nombre totale d'occurrence où un objet est détecté alors qu'il n'existe pas
+	\item FP : le taux de faux négatives est le nombre totale d'occurrence où un objet existant n'est pas détecté
+	\item ID Sw : le taux de changement d'identité est le nombre de fois où un objet est assigné à une nouvelle identité dans son suivi
+	\item MOTA (Multiple object tracking accuracy) : taux de confiance de suivi d'objets multiple est une combinaison de 3 taux, MOTA = 1 -  $\frac{\sum_t(fn_{t}+fp_{t}+idSw_{t})}{\sum_t g_{t}}$  où pour chaque image t, $g_{t}$  est le nombre d'objet présent, $fn_{t}$ le nombre de faux négatifs, $fp_{t}$ le nombre de faux positifs et $idSw_{t}$ le nombre d'identité changé
+	\item FAF : taux de fausse alarme par image est le nombre moyen de faux positives pour chaque image
+	\item Hz : la vitesse du traqueur qui est mesurer en Hz (image par seconde)
+\end{itemize}
+
+A ces critères, nous ajouterons le calcules des indicateurs pour savoir quel proposition est la plus performante.
+
+Pour la suite, nous allons présenter les différentes propositions de méthodes de suivi de personnes et analyser ses méthodes pour savoir lesquelles sont celles qui réponde le mieux à notre problématique.
+ 
+%Notons que ce chapitre se place toujours, de manière implicite ou explicite, sous la locution~: <<~à notre connaissance~>>.
+%Des oublis ou omissions étant toujours possible, il faut néanmoins en préciser la gravité~:
+%\begin{itemize}
+   %\item L'oubli d'un apport \emph{très} récent, ou de portée confidentielle, est pardonnable.
+  % \item L'oubli d'apports largement disponibles, du moins dans la communauté concernée, est un manque flagrant sinon de culture du moins de la capacité à retrouver de l'information pertinente.
+   %\item Les connaissances de portée générale, celle de l'<<~honnête homme~>>, seront seulement mentionnées dans cette introduction sans les détailler dans les sections de ce chapitre.
+%(Si un usage très technique d'un pré-requis devait être fait dans la proposition du rapport -- ex.~: quelques éléments d'analyse de données, de probabilités, etc. --, et afin d'éviter au lecteur d'aller chercher l'information dans les sources, cette description sera reportée dans une annexe -- cf.~annexe~\ref{ann:Rappels}.)
+%\end{itemize}
+
+%Normalement, les propositions antérieures ne permettent pas de résoudre le problème posé.
+%Si, par extraordinaire ou par chance, cela était le cas, alors la conclusion de cette partie~:
+%\begin{itemize}
+   %\item mentionnera honnêtement qu'il se trouve que le problème a été -- récemment -- résolu de manière satisfaisante~;
+   %\item contiendra la rédaction d'un nouveau problème, connexe à celui d'origine, l'introduction du rapport sera modifiée en conséquence et de nouveaux pré-requis seront présentés ici.
+%\end{itemize}
+%Remarquons que la conclusion peut être la poursuite d'une solution alternative au problème d'origine, par exemple parce que la solution trouvée dans la littérature est propriétaire ou brevetée, c'est-à-dire indisponible.
+
+%Cela dit, et en toute probabilité, vont être ici présentés plusieurs pré-requis servant de base à la résolution de la problématique du travail.
+%Le problème étant encore imparfaitement résolu, on doit trouver ci-dessous un certain nombre de sections correspondant à des approches antérieures (notées ici \emph{<proposition i>} avec $1 \leq i \leq n$) qui fournissent des solutions \emph{partielles}.
+
+%Sont donc ici introduites la liste des propositions étudiées en expliquant pourquoi le choix s'est porté \emph{a priori} sur certaines d'entre elles ou pourquoi il a émergé \emph{a posteriori} s'il s'agissait d'un apport important à notre étude.
+
+\section{Proposition 1 : SORT avec une métrique d'association en profondeur}
+
+%Pour chaque proposition étudiée\footnote{Substituez au marqueur <<~\emph{<Proposition i>}~>> un titre explicite~! Et ne conservez pas les crochets...}, sauf exception, le plan s'annonce de la même façon~:
+%\begin{enumerate}
+   %\item une présentation générale~:
+      %\begin{itemize}
+        % \item qui fait le lien avec le travail demandé~;
+         %\item doublée d'une présentation objective de la proposition d'autrui~;
+      %\end{itemize}
+   %\item une analyse critique de cette proposition où sont soulignées ses forces et ses faiblesses~:
+      %\begin{itemize}
+         %\item tout d'abord générales~;
+         %\item puis vis-à-vis de sa possible exploitation dans le travail de ce rapport.
+      %\end{itemize}
+%\end{enumerate}
+%Soulignons un point extrêmement important et relevant de l'honnêteté intellectuelle.
+%Toutes les affirmations et propositions qui ne sont pas issues de notre travail doivent être clairement référencées, autant de fois que le texte en fait mention.
+%Référez-vous à l'annexe~\ref{ann:Citations} pour les pratiques de mise en page et \emph{en particulier à la section~\ref{ann:Plagiat} pour ce qui concerne le \fcolorbox{red}{yellow}{\textbf{plagiat}}}.
+
+%La bibliographie est constituée (quasi exclusivement) de références pérennes, c'est-à-dire de référence à des ouvrages, articles de journaux ou de conférences.
+%Ces références-là peuvent être accompagnées de références sur la Toile mais ne peuvent pas se limiter à cela.
+%Dans le cas où une référence sur la Toile est fournie, il convient, dans la limite des droits, d'en faire une copie privée que l'on pourra transmettre en cas de demande (voire copier en annexe si elle n'est pas de taille trop importante et si l'auteur a donné sont \emph{autorisation explicite}).
+%En effet, cette dernière peut évoluer à tout instant et même disparaître.
+%Par ailleurs, les références à de simples sites \emph{web} n'ont pas vocation à faire partie de la bibliographie (\cite{Wolfe} est ici un contre-exemple mais pour lequel une copie a été mise en ligne sur Madoc)~; elles seront plus judicieusement portées en notes de bas de page, en ne se limitant pas à l'URL quand les informations habituelles d'une référence sont disponibles.\footnote{En reprenant la référence \cite{Wolfe}, nous aurions~: Joe  \textsc{Wolfe}, \emph{How to Write a PhD Thesis}, 1996, \url{http://www.phys.unsw.edu.au/~jw/thesis.html}} \footnote{\url{http://docinsa.insa-lyon.fr/sapristi/index.php?rub=1003}} \footnote{\url{http://www.tlfq.ulaval.ca/axl/monde/citations-references.htm}} \footnote{Guy \textsc{Spielmann}, \emph{Établissement d'une bibliographie -- Méthode pour citer les sources et format des citations}, 10 janvier 2009, \url{http://www9.georgetown.edu/faculty/spielmag/docs/biblio.htm}} \footnote{François-Pierre \textsc{Gingras}, \emph{Comment citer des sources sur Internet dans un travail scientifique}, 21 mars 2005, \url{http://aix1.uottawa.ca/~fgingras/metho/citation.html}}
+
+\subsection{Présentation}
+
+Cette solution \cite{PROP1} est basé sur la méthode Simple Online and Real-time Tracking (SORT) \cite{Sort} qui utilise des algorithmes de détections simples, en y ajoutant une information d'apparence et de mouvement pour détecter et suivre une personne dans une vidéo. SORT détermine la position des personnes dans une image via le filtre de Kalman, puis associe les données de détection image par image avec la méthode Hongroise qui utilise une métrique qui mesure le chevauchement du cadre de sélection des personnes.
+
+La méthode d'apprentissage de cette méthode est d'apprendre hors ligne une métrique d'association approfondie sur un ensemble de données où les personnes sont ré-identifiées. L'application en ligne de la méthode s'effectue via des requêtes de recherche du plus proches voisins sur une matrice d'association de mesure de suivi de détection dans un espace visuelle d'apparence.
+
+Le système SORT avec une métrique d'association en profondeur peut être décrit en 4 composantes :
+
+\bigskip
+
+1. \textbf{Suivi de piste et estimation d'état} : Le scénario de suivi de piste est défini avec 8 dimension d'état d'espace qui sont la position centrale du cadre entourant une personne (u,v), un ratio d'aspect ($\gamma$), la hauteur du cadre (h) et leurs vitesses directionnelles respective associés ($\widetilde{x}$,$\widetilde{y}$,$\widetilde{\gamma}$,$\widetilde{h}$). 
+Les coordonnées du cadre (u, v, $\gamma$, h) sont déterminé comme observation directe de l'objet, à l'aide d'un filtre de Kalman standard avec un mouvement à vitesse constante
+et un modèle d'observation linéaire. Le principe de ce composant est que pour chaque suivi ont compte le nombre d'images associés depuis la dernière bonne mesure d'association du filtre de Kalman. Lorsqu'une détection ne peut pas être associé à un suivi déjà existant, un nouveau suivi est crée et au bout de 3 images successive où le suivi est considéré comme une tentative, si le suivi n'a pas de mesures d'associations valide alors on le supprime. 
+
+2. \textbf{Problème d'affectation} : L'algorithme Hongrois résout le problème d'association entre les mesures prédites du filtre de Kalman et les nouvelles mesures. Cette méthode intègre une combinaison des mesures de mouvement et d'apparence. La mesure de mouvement basé sur la distance Mahalanobis, donne l'emplacement des objets en fonction de leurs mouvements, ce qui est performant pour la reconnaissance à court terme. La mesure d'apparence basé sur la distance cosinus, donne des informations d'apparence, ce qui est performant pour la reconnaissance après de longue occlusions.
+
+3. \textbf{Cascade d'association} : Au lieu d'associer les mesures au suivi dans un seul bloc, on résout l'association en résolvant plusieurs sous-problèmes.
+
+4. \textbf{Descripteur d'apparence profonde} : Un réseau neuronal convolutif est utilisé hors ligne pour apprendre les métriques profondes d'association dans un contexte de suivi de personne. En ligne, leur méthodes utilisent des requêtes du plus proches voisins pour déterminer les détections similaire image par image.
+
+%Chaque étude commence par présenter la nature de la proposition examinée, c'est-à-dire sa portée et son lien avec le problème à traiter.
+
+%Une présentation claire et synthétique résume les points principaux de la proposition étudiée.
+
+%Cette présentation doit être objective.
+%En d'autre termes, il ne faut pas tirer de conclusion hâtive, la proposition n'aura été vraiment comprise qu'\emph{indépendamment} de l'intérêt immédiat et supposée vis-à-vis du travail demandé.
+%Afin de préparer cette rédaction, des fiches de lecture seront établies et mises en annexe (cf.~annexe~\ref{ann:FichesLecture}).
+%\begin{structuration}
+%Cette sous-section peut, et même doit, être structurée en fonction de la proposition.
+%Il faut toutefois garder à l'esprit que~:
+%\begin{enumerate}[(i)]
+   %\item une décomposition trop profonde devient incompréhensible (il faut réorganiser le plan et fournir une logique de progression, d'où davantage linéaire)~;
+   %\item chaque partie doit contenir plusieurs paragraphes (on ne crée pas un niveau hiérarchique pour un unique paragraphe qui serait précédé d'un unique paragraphe d'introduction et d'un unique paragraphe de conclusion~!).
+%\end{enumerate}
+
+%Si les propositions devenaient très longues à décrire alors les niveaux décrits dans ce pseudo rapport sont insuffisants.
+%Il faut remplacer le présent \emph{chapitre} <<~\'Etat de l'art~>> par une \emph{partie} d'ouvrage, les sections devenant des chapitres et ainsi de suite.
+
+%En cas de déséquilibre patent entre propositions, il faut trouver des regroupements thématiques dans le but d'équilibrer les tailles.
+ %Cela s'applique d'ailleurs aussi dans le cas d'une décomposition en sections.
+
+%Inversement, des sections ou chapitre trop courts amènent à fusionner des niveaux supérieurs.
+%Ainsi deux ou trois chapitres d'une ou deux pages chacun doivent-ils être fusionnés, dans la limite où la logique s'y prête.
+%(L'alternative extrême est de changer de catégorie de document.
+%Ce n'est alors plus un rapport que l'on rédige mais seulement un article...)
+%\end{structuration}
+
+\subsection{Analyse}
+
+%La présentation objective est ensuite, et seulement ensuite, suivie d'une étude critique.
+
+%Doivent ici être pointées aussi bien ses avantages que ses limites, démonstration à l'appui.
+
+\subsubsection{Intérêts de la proposition \emph{1}}
+
+L'un des plus grand intérêt de la proposition est de pouvoir suivre les personnes malgré un long moment d'occlusion. La proposition est simple à mettre en place et peut être lancer en temps réel avec Nvidia GeForce GTX 1050 mobile GPU. De plus, le réseau pré-entrainer est disponible sur leur projet GitHub \url{https://github.com/nwojke/deep_sort}.
+
+Le code est disponible en python 2.7 et 3. Une démonstration est utilisable sur les données MOT16 pour tester le modèle. Le code est open source.
+
+%Vis-à-vis du travail demandé, il faut ici expliquer comment la proposition pourrait être utilisée.
+%Il convient de ne pas s'autocensurer dans cette partie.
+%Il faut émettre des idées non pas totalement sur le mode du remue-méninge mais en évitant de fermer trop précipitamment des directions de travail.
+%La proposition permettra de faire le tri entre les bonnes idées et les idées qui se seront révélées inapplicables.
+
+\subsubsection{Limites de la proposition \emph{1}}
+
+La puissance nécessaire au calcul peut posé problème car nous n'avons pas de GPU mais un simple CPU qui ne fait pas de calcule parallèle contrairement au GPU.
+
+%Les limites vont au delà des inconvénients objectifs de la proposition étudiée.
+%Il faut aussi tenir compte de son <<~adaptabilité~>> au problème traité.
+
+\section{Proposition 2 : Suivi de multiple objets en temps réel C++SORT}
+
+\subsection{Présentation}
+
+La méthode \cite{PROP2} est proposé par un étudiant en thèse dont le sujet est de combiner des techniques de détection, de prédiction et d'association pour créer une méthode de suivi de multiple objets.
+
+Dans cette méthode, la tâche de détection et de suivi d'objet sont séparé. La méthode SORT - Simple Online and Real-time tracking est utilisé, cependant la méthode est étendu en utilisant d'autres méthodes de prédiction que les filtres de Kalman et d'autres mesures de similarité que l'IoU (intersection sur l'union).
+
+Le principe de la méthode est de garder un suivi de chaque objet en modélisant son mouvement avec une prédiction à l'aide d'un filtre de Kalman ou d'un filtre de particule. Pour chaque image, les objets sont détecter, de nouvelles localisations des suivis d'objets déjà suivi sont prédits et enfin, les détections et les suivis d'objet sont associé basé sur la similarité des cadres. Les prédictions sont mis-à-jour avec les nouvelles détections qui leurs sont associés. De nouvelles prédictions sont initialisées pour chaque détection non associé à un suivi. Les prédictions non utilisé sont supprimées.
+
+\subsection{Analyse}
+
+\subsubsection{Intérêts de la proposition \emph{2}}
+
+La proposition est codé en c++ ce qui permet une réutilisation du code plus simple. De plus, le code est disponible sur le projet GitHub  \url{https://github.com/samuelmurray/tracking-by-detection} en open source.
+
+\subsubsection{Limites de la proposition \emph{2}}
+
+La limite de cette proposition est qu'elle ne marche pas en temps réel. L'association d'une méthode de détection aux techniques de prédiction et d'association prend trop de temps.
+
+\section{Proposition 3 : Ensemble de filtres de corrélation par noyau pour le suivi d'objets à grande vitesse}
+
+\subsection{Présentation}
+
+La méthode \cite{PROP3} proposé utilise un ensemble de filtre de corrélation par noyau qui gère les variations d'échelles et les mouvements des cibles (personnes).  
+
+3 filtres de corrélation par noyau sont appliquer successivement sur une image, au lieu de les appliquer tous sur la même image. Le premier filtre RSt apprend la zone cible et son fond, le deuxième filtre Rs se concentre sur l'apprentissage de l'échelle de la cible et le dernier filtre RLt se concentre sur l'apprentissage de la zone cible et sur un fond plus grand que celui du premier filtre.
+
+\bigskip
+
+\begin{figure}
+		\centering
+		\includegraphics[scale=0.50]{"Images/EnKCF".png} 
+ 		\caption{EnKCF (Source~: <<~\emph{Graphics in Ensemble of Kernelized Correlation Filters for High-Speed Object Tracking}~>>,page~4)}
+   		\label{fig:EnKCF}
+	\end{figure}
+
+\bigskip
+
+La méthode fonctionne par étapes est représenté à la figure : la première image est utiliser pour initialiser l'algorithme de suivi et le filtre de particule. Pour les 6 prochaines images chacun des 3 filtres est déployer successivement les changements d'échelle d'une cible. Puis on répète l'ordre des 3 filtres.
+
+<<Le fait qu'une matrice circulante puisse être diagonalisée par transformée discrète de Fourier est la solution pour réduire la complexité de toute méthode de suivi basée sur un filtre de corrélation. Les éléments non diagonaux deviennent nuls alors que les éléments diagonaux représentent les valeurs propres de la matrice circulante. Les valeurs propres sont égales à la transformation DFT des éléments de l'échantillon de base (x). Le filtre de corrélation par noyau, en particulier, applique un noyau à x pour le transformer en un domaine plus discriminant. La matrice circulante est ensuite formée en appliquant des décalages cycliques sur le noyau x>>,(Source~: <<~\emph{Citation in Ensemble of Kernelized Correlation Filters for High-Speed Object Tracking}~>>
+ 
+\subsection{Analyse}
+
+\subsubsection{Intérêts de la proposition \emph{3}}
+
+La proposition 3 possède un code source sur un GitHub \url{https://github.com/buzkent86/EnKCF_Tracker} réutilisable mais la méthode n'est pas facilement compréhensible. La méthode est implémenter en c++. De plus, il est possible de l'utiliser en temps réel. L'un des objectifs des chercheurs ayant implémenter cette méthode est de pouvoir utiliser une méthode de suivi de personnes sur des systèmes limités en calcul.
+
+\subsubsection{Limites de la proposition \emph{3}}
+
+La méthode ne gère pas les occlusions.
+
+\section{Récapitulatif}
+
+À l'issue de ce travail bibliographique et critique, un résumé des éléments intéressants et des éléments manquants de chaque proposition est mis en évidence avec une présentation condensée des arguments ayant abouti à cette dichotomie.
+
+Les éléments seront présentés de manière synthétique dans un tableau comparatif (cf.~tableaux~\ref{tab:Comparatif} et~\ref{tab:ComparatifAlternatif} à titres d'exemples simplifiés).
+
+\begin{table*}
+    \begin{center}
+        \begin{tabular}{|c||c|c|}
+            \hline
+            Proposition & Avantages & Inconvénients \\
+            \hline
+            \hline
+            Proposition $1$ & Gestion des occlusions & Puissance de calcul sur GPU \\
+              & Facilement mise en place & \\
+              & Code source disponible en python & \\
+            \hline
+            Proposition $2$ & Code source disponible en c++ & Ne gère pas le temps réel \\
+            & Gère les occlusions &  \\
+            \hline
+            Proposition $3$ & Code source disponible en c++ & Ne gère pas les occlusions \\
+            & Gère le temps réel  &  \\
+            & Utilisable sur un système limités en calcul &  \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Tableau comparatif des propositions étudiées}
+    \label{tab:Comparatif}
+\end{table*}
+
+\begin{table*} % Utiliser la version étoilée des flottants pour les faire tenir sur deux colonnes
+    \begin{center}
+        \begin{tabular}{|c||c|c|c|c|c|}
+            \hline
+            Avantages    & Proposition 1 & Proposition 2 & Proposition 3 \\
+            \hline
+            \hline
+            Code source disponible & $\surd$ & $\surd$ &  $\surd$ \\
+            \hline
+            Gère les occlusions & $\surd$ & $\surd$ &    \\
+            \hline
+            Calcule GPU & $\surd$ & $\surd$ &    \\
+            \hline
+            Calcule CPU & $\approx$ & $\approx$ &  $\surd$  \\
+            \hline
+            Temps réels & $\surd$ &  &  $\surd$  \\
+            \hline
+            Méthode facilement compréhensible & $\surd$ & $\surd$  &    \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Tableau comparatif des avantages des propositions étudiées}
+    \label{tab:ComparatifAlternatif}
+\end{table*}
+
+%\begin{typographie}
+%Au passage, notons que les tableaux, figures et autres illustrations doivent être systématiquement placés dans des éléments <<~flottants~>>, c'est-à-dire situés non pas exactement à l'endroit où il sont mentionnés.
+%Ils sont donc numérotés, munis d'une légende et référencés depuis le texte principal.%
+%\footnote{\LaTeX\ se tire plutôt bien de cette tâche de positionnement optimal des flottants, sachant qu'il s'agit d'un problème NP-difficile~!}
+%Toute utilisation <<~en ligne~>> est à proscrire.
+%Une figure, au sens large, ne remplace pas le texte, bien au contraire~; c'est ce dernier qui établit une présentation, un raisonnement, etc., et la figure ne fait que l'illustrer pour le rendre plus compréhensible soit d'emblée soit après avoir pris connaissance du texte.
+%\end{typographie}
+
+\section{Conclusion}
+
+Nous avons détaillés les avantages et les inconvénients des 3 propositions abordés qui possède un code source réutilisable. À l'issue de ce travail de recherche bibliographique, il apparaît que plusieurs propositions peuvent servir de base à la résolution de notre problème de suivi de personnes.
+
+Par le suite, nous allons essayer d'implémenter une de ces propositions et observé s'il est possible de la faire fonctionner sur nos propres données de test.
+
+%Il semble se détacher un certain nombre de directions privilégiées que nous allons exploiter en priorité dans nos propositions.
+%Celles-ci font l'objet de l'étude du chapitre suivant.
+
+%-------------------------------------------------------------------------------------------------------------
+
+% \part{Réalisations} % À décommenter si l'état de l'art a nécessité plusieurs chapitres.
+% \label{part:Realisations}
+
+%\chapter{Propositions}
+%\label{chap:Propositions}
+
+%Le titre de ce chapitre peut s'écrire au singulier ou au pluriel en fonction du nombre de propositions faites et de leur investigation.
+
+%Si plusieurs propositions sont faites, elles doivent être annoncées ici et leurs points marquants décrits succinctement, comme donné en exemple dans le paragraphe et les sections suivants.
+
+%\bigskip
+
+%\emph{Dans les sections suivantes nous allons décrire notre proposition.
+%Partis de l'hypothèse que [...], nous en avons déduit que [...].
+%Par la suite, cette idée nous a permis d'aboutir à la proposition d'un algorithme d'extraction de paramètres et d'une fonction qui permet de résumer de manière pertinente et discriminante ces différents paramètres en une unique valeur réelle.
+%La qualité de cette mesure est démontrée.
+%Il nous faut toutefois admettre en toute franchise que cette réduction brutale, si elle offre l'avantage indéniable, entre autres, de permettre d'ordonner les valeurs d'origine, perd toute finesse dans l'analyse de données multidimensionnelles.}
+
+%\section{Notre proposition i}
+
+%L'organisation des cette section (voire chapitre) est la plus libre qui soit.
+%Toutefois, on peut proposer une organisation qui distingue l'intuition de sa formalisation et de sa démonstration.
+
+%\subsection{Idées préliminaires}
+
+%La fin du chapitre~\ref{chap:EtatArt} a permis de mettre en avant les éléments présents dans des propositions antérieures qui sont exploitables pour résoudre notre problème.
+%Nous développons ici les idées qui nous semblent les plus à même d'y parvenir.
+
+%\subsection{Formalisation}
+
+%Le développements des intuitions et idées de la section précédente vont aboutir à des propositions formalisées.
+%Cela peut se traduire aussi bien par des formules que des algorithmes.
+
+%\emph{Nous avons trouvé une formule particulièrement pertinente pour résumer les nombreuses caractéristiques d'une image~:}
+%\begin{equation}
+   %\label{eq:Proposition}
+   %\Phi~:
+      %\begin{array}{ccc}
+         %T_1 \times \ldots \times T_n & \to & \mathbb{R}\\
+         %(a, p, m_1, m_2, \kappa, \ldots, \alpha, \alpha', \ldots,z) & \mapsto & \ldots
+     % \end{array}
+%\end{equation}
+
+%\emph{Les différents paramètres de la fonction sont eux-mêmes fournis par l'algorithme~\ref{alg:Proposition}.}
+
+%\begin{algorithm*}
+   %L'algorithme peut être décrit de différentes manières, avec les environnements~:
+   %\begin{itemize}
+      %\item \textsl{verbatim} (mode rudimentaire)~:
+         %\begin{verbatim}
+%fonction F (I~: image)~: (T1, T2, ..., Tn)
+%...\end{verbatim}
+     % \item \textsl{tabbing} (code plus lisible en mode \LaTeX, intéressant pour les algorithmes utilisant lourdement les mathématiques)~:
+        % \begin{tabbing}
+            %\textbf{fonction} $F$ ($I~: \mathcal{I}$)~: $T_1 \times T_2 \times \cdots \times T_n$\\
+            %\textbf{return} $\sum\limits_{\forall p \in I} f^{(n)}(p)$
+         %\end{tabbing}
+
+      %\item \textsl{lstlisting} pour du code \emph{source} en ligne~:
+         %\begin{lstlisting}
+%fonction F (I~: image)~: (T1, T2, ..., Tn)
+%...
+        % \end{lstlisting}
+         %ou inclusion d'un code \emph{externe} (facilite les mises à jour et le paramétrage fin)~:
+         %\lstinputlisting[alsolanguage=Python,
+             %             emph={pgcd},
+                 %         emphstyle={\color{red}},
+                     %     stringstyle={\color{olive}},
+                         % identifierstyle={\color{blue}},
+                          %morekeywords={assert},
+                          %showstringspaces=false]{pgcd.py}
+     % \item avec d'autres environnements standard (ex.~: \textsl{algorithmic}) pour les pseudo-programmes / algorithmes
+%          \begin{algorithmic}[1]
+%             \REQUIRE $n \geq 0$
+%             \ENSURE $y = x^n$
+%             \STATE $y \Leftarrow 1$
+%             \STATE $X \Leftarrow x$
+%             \STATE $N \Leftarrow n$
+%             \WHILE{$N \neq 0$}
+%                \IF{$N$ is even}
+%                   \STATE $X \Leftarrow X \times X$
+%                   \STATE $N \Leftarrow N / 2$
+%                \ELSE[$N$ is odd]
+%                   \STATE $y \Leftarrow y \times X$
+%                   \STATE $N \Leftarrow N - 1$
+%                \ENDIF
+%             \ENDWHILE
+%          \end{algorithmic}
+%   \end{itemize}
+%   \caption{Proposition}
+ %  \label{alg:Proposition}
+%\end{algorithm*}
+
+%\subsection{Démonstration}
+
+%Tous les éléments de démonstration du bien fondé de la méthode proposée doivent être explicités si ce n'est sous la forme de théorèmes, du moins avec un enchaînement argumenté de causes à effets.
+
+%\begin{theoreme}
+   %Soit $(a, p, m_1, m_2, \kappa, \ldots, \alpha, \alpha', \ldots,z) \in T_1 \times \ldots \times T_n$ tel que [...] alors [...].
+%\end{theoreme}
+
+%\begin{preuve}
+   %Procédons par contradiction.
+%[...]~\hfill$\square$
+%\end{preuve}
+
+%\subsection{Analyse}
+
+%Une analyse objective sur cette orientation est ici faite.
+%Le problème est-il résolu dans sa totalité, sinon quelle partie~?
+%La résolution est-elle efficace d'un point de vue informatique~?
+%Etc.
+
+%\section{Conclusion}
+
+%Différentes idées nous ont conduit à faire différentes propositions.
+%À ce stade, il convient de restreindre leur nombre afin d'avoir le temps de conduire des expérimentations suffisamment poussées, nous permettant d'établir des conclusions pertinentes.
+
+%\emph{En comparant les apports démontrés ou à vérifier dans le tableau [...], nous en déduisons un classement <<~au mérite~>> qui est le suivant~: [...].
+%Par manque de temps, nous allons nous limiter aux deux premiers dans le chapitre~\ref{chap:Experimentations}.}
+
+%-------------------------------------------------------------------------------------------------------------
+
+%\chapter{Expérimentations et résultats}
+%\label{chap:Experimentations}
+
+%S'agissant d'un travail de recherche \emph{et} de \emph{développement}, une production de code source est très certainement présente.
+%Auquel cas, le chapitre va commencer par une section sur le produit développé.
+
+%\begin{structuration}
+%Soulignons que, comme dans le chapitre précédent, si le volume de ce chapitre devient très important, il est préférable de le transformer en partie de rapport, les sections suivantes devenant des chapitres, et ainsi de suite pour les parties hiérarchiquement inférieures.
+%\end{structuration}
+
+%\section{Notre proposition i}
+
+%\emph{Notre proposition i nous a amené à des développements plus ou moins complexes dont nous détaillons les contraintes ci-dessous.
+%Après la vérification et la validation de ces développements, cela nous a permis de conduire différentes expérimentations dont les hypothèses de travail sont précisés (ou rappelées).
+%Les résultats sur des jeux de données (voire des bancs d'essais normalisés) sont ensuite analysés en détail.}
+
+%\subsection{Développements}
+
+%Les contraintes liées à la mise en \oe uvre d'un développement informatique implémentant la (les) proposition(s) faite(s) dans le chapitre précédent sont mises en exergue dans cette partie.
+
+%Il convient de distinguer~:
+%\begin{itemize}
+   %\item les contraintes générales, celles s'appliquant \emph{a priori} à tout développement de la proposition sur quelque système, avec quelque langage que ce soit~;
+   %\item les contraintes intrinsèques aux choix de développement.
+%\end{itemize}
+
+%\subsubsection{Contraintes liées aux propositions}
+
+%Il peut ne pas y en avoir.
+
+%\subsubsection{Contraintes liées au développement}
+
+%Nous pourrons ici exposer~:
+%\begin{itemize}
+   %\item des contraintes liées aux choix techniques, chaque solution présentant des avantages et des inconvénients, ces derniers ne pouvant pas toujours être entièrement éliminés, par exemple des bogues inattendues sur les produits utilisés~;
+   %\item des contraintes propres au travail lui-même comme le temps insuffisant pour implémenter totalement les fonctionnalités attendues.
+%\end{itemize}
+
+%Cette liste n'est pas limitative.
+%Mais il faut organiser les contraintes de manière logique et non pas seulement les énumérer.
+
+%\subsection{Expérimentations}
+
+%Le logiciel produit peut être aussi bien le but du travail qu'une étape intermédiaire.
+
+%\bigskip
+
+%Dans le cas d'un produit final, l'expérimentation se ramène~:
+%\begin{itemize}
+   %\item à la vérification et à la validation du développement du point de vue technique~;
+   %\item à son utilisation sur un jeu de données significatif et à des mesures de qualité.
+%\end{itemize}
+
+%\bigskip
+
+%Dans le cas d'une étape intermédiaire, l'application du logiciel sur des jeux de données se poursuit avec une analyse minutieuse des résultats non pas du point de vue informatique (ex.~: performances constatées vis-à-vis de la complexité asymptotique promise au chapitre~\ref{chap:Propositions}) mais bien par rapport aux buts poursuivis par le travail.
+%Il devrait donc y avoir nombre de tableaux et/ou graphiques (cf.~figure~\ref{fig:Courbes} comme exemple%
+%\footnote{Urs Oswald, \emph{``Graphics in \LaTeX\ 2$_\varepsilon$,''} March 2003, \url{http://www.ursoswald.ch}.}%
+%) dans cette partie du rapport.
+
+%\begin{figure}
+  %\centering
+   %\setlength{\unitlength}{5cm}
+   %\begin{picture}(1.2, 1.3)
+     %\put(0, 0){\vector(1, 0){1.15}}
+     %\put(1.17, -.015){$x$}
+     %\put(0, 0){\vector(0, 1){1.15}}
+     %\put(0, 1.19){\makebox(0, 0){$y$}}
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.2998/0.905) m2=10.0
+     %\qbezier(0.0,0.0)(0.2093,0.0)(0.2998,0.905)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.4625/0.8198) m2=5.0
+     %\qbezier(0.0,0.0)(0.2985,0.0)(0.4625,0.8198)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.5757/0.744) m2=3.3333
+     %\qbezier(0.0,0.0)(0.3525,0.0)(0.5757,0.744)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.6589/0.677) m2=2.5
+     %\qbezier(0.0,0.0)(0.3881,0.0)(0.6589,0.677)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.7218/0.618) m2=2.0
+     %\qbezier(0.0,0.0)(0.4128,0.0)(0.7218,0.618)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.7703/0.5662) m2=1.6667
+     %\qbezier(0.0,0.0)(0.4306,0.0)(0.7703,0.5662)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.8081/0.5207) m2=1.4286
+     %\qbezier(0.0,0.0)(0.4436,0.0)(0.8081,0.5207)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.8381/0.4806) m2=1.25
+     %\qbezier(0.0,0.0)(0.4536,0.0)(0.8381,0.4806)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.862/0.4454) m2=1.1111
+     %\qbezier(0.0,0.0)(0.4611,0.0)(0.862,0.4454)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.8814/0.4142) m2=1.0
+     %\qbezier(0.0,0.0)(0.4672,0.0)(0.8814,0.4142)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.8972/0.3866) m2=0.9091
+     %\qbezier(0.0,0.0)(0.4719,0.0)(0.8972,0.3866)
+     % qbezier P1=(0.0/0.0) m1=0.0
+     %         P2=(0.9102/0.362) m2=0.8333
+     %\qbezier(0.0,0.0)(0.4758,0.0)(0.9102,0.362)
+     %\put(0.5757, 0.744){\circle*{.015}}
+     %\put(0.6,    0.74){$(u,v)$}
+     %\put(0.5,    0.05){$L$}
+     %\put(0.18,    0.45){$L$}
+     %\put(1, -.02){\line(0, 1){.04}}
+     %\put(1, .06){\makebox(0, 0){$L$}}
+     %\put(-.02, 1){\line(1, 0){.04}}
+     %\put(.03, .98){$L$}
+   %\end{picture}
+   %\caption{Qualité des résultats obtenus (Source~: <<~\emph{Graphics in %\LaTeX\ 2$_\varepsilon$}~>>, page~23)}
+   %\label{fig:Courbes}
+%\end{figure}
+
+%Si les graphiques sont des éléments qui permettent une interprétation visuelle rapide, il est indispensable de fournir les résultats numériques correspondants.
+%Les tableaux synthétiques apparaîtront dans cette partie (cf.~tableau~\ref{tab:Courbes} par exemple).
+%Les tableaux contenant l'ensemble des mesures seront reportés en annexe (cf.~annexe~\ref{ann:Mesures}).
+%Ces informations doivent être fournies en tant que \emph{preuve}~; un autre expérimentateur doit pouvoir contrôler, en faisant lui-même les expériences, qu'il trouve bien les résultats que nous annonçons~!
+%Si l'information est vraiment trop importante pour tenir dans le rapport, il faudra se mettre en mesure de fournir une version électronique, en ligne de préférence, à la demande sinon en fournissant une adresse de contact pérenne...
+
+%\begin{table}
+   %\centering
+   %\begin{tabular}{|c||c|c|}
+      %\hline
+      %$x$ & $u$ & $v$\\
+      %\hline
+      %\hline
+      %\ldots & \ldots & \ldots\\
+      %\hline
+   %\end{tabular}
+   %\caption{Valeurs numériques correspondant aux courbes de la figure~\ref{fig:Courbes}}
+   %\label{tab:Courbes}
+%\end{table}
+
+%\subsection{Résultats}
+
+%\emph{L'application de notre algorithme et de la fonction de réduction nous a fourni un jeu de valeurs dont nous avons pu analyser la qualité...}
+
+%\section{Conclusion}
+
+%La conclusion de ce chapitre est normalement le point d'orgue du travail même s'il n'en est pas nécessairement son aboutissement.
+%Il s'agit de mettre en perspective les limites de la réalisation, la qualité et la portée des résultats néanmoins obtenus, et de dresser un retour d'expérience sur la façon de conduire cette partie du travail pour une réalisation à neuf ou <<~seulement~>> pour une remise à niveau par un repreneur.
+
+%Dans le cas où plusieurs propositions ont été explorées, il faut juger soit de leur complémentarité, soit de leur supériorité relative.
+
+%-------------------------------------------------------------------------------------------------------------
+
+\chapter{Conclusion}
+
+%À l'issue de ce travail, résumons tout d'abord rapidement les principales étapes de ce dernier.
+%De cette expérience, nous tirons quelques enseignements et ouvrons également des perspectives pour des recherches et développements ultérieurs soit parce qu'ils n'ont pas pu être menés à terme ici, soit parce que de nouveaux défis se présentent à nous.
+
+En conclusion, le travail de recherche effectué sur le détection de personne dans une image à permis de prendre connaissance d'une techniques de détection avec des régions proposés englobantes qui sont utiliser dans la plupart des méthodes de détection de personnes. Des régions sont proposé, puis des vecteurs de caractéristiques sont associé à ces régions, puis on calcule la probabilité d'une région d'appartenir à une classe spécifique. Au final, en sortie, on obtient la localisation de la région englobante d'un objet et son type.
+
+La partie sur le suivi d'individu est plus complexe car des nombreuses techniques sont utilisés mais les principales techniques consiste à récupérer les détections image par image et à les associés entre elles pour cela il existe deux méthodes : l'association de données classique entre 2 vecteurs de caractéristiques et l'association d'affinité où la méthode prédit les futures détections en s'aidant des anciennes puis associe les prédictions avec les détections pour avoir un suivi de la détection. L'association d'affinité peut aussi se faire en prédisant plusieurs prédictions pour un objet et en choisissant la bonne prédiction à chaque image.
+
+Ma première idée a été de trouvé 3 propositions possédant un code source et qui pouvaient être intéressant. Suite à la présentation des 3 propositions, je cherche maintenant à évaluer ces trois propositions sur les critères d'évaluations défini dans la partie critère d'évaluation avec une vidéo que je vais crée pour répondre au contexte spécifique du sujet.
+
+Le résultat de l'évaluation nous montrera qu'elle méthode répond au mieux à a problématique.
+
+%\section{Résumé du travail effectué}
+
+%Même si cela est une énième répétition, il convient de résumer sinon la totalité des étapes du travail du moins les résultats marquants du travail.
+
+\section{Enseignements}
+
+%Les enseignements qui ont été tirés de ce travail, et il y en a nécessairement, doivent être évoqués.
+%Certains peuvent être personnels.
+%D'autres seront de portée générale.
+%Les plus précis seront ceux directement issus du travail, de ses résultats, des interprétations faites.
+
+Ce travail m'a permis de me renseigner sur les méthodes de détection et de suivi de personnes domaine que je ne connaissait absolument pas. De plus, j'ai compris qu'un projet de recherche et de développement se concentre sur la lecture d'articles scientifiques pour en trouver des éléments qui peuvent nous aider à proposer notre propre solution. Pour ma part, il existait déjà des méthodes implémenter par des chercheurs qui semble performante, j'ai préférer les réutiliser au lieu de réinventé toute la méthode.
+
+\section{Perspectives de recherche}
+
+%Il est rare qu'un travail, quel qu'il soit, clôture complètement un sujet.
+%Quand bien même, il est toujours possible de proposer des prolongements, soit dans le droit fil du travail accompli, soit comme développements connexes, suite à une ou plusieurs idées qui sont venues à l'esprit ou qui n'ont pas pu être exploitées ici.
+
+%Bien entendu, si le travail n'a pas été terminé, il faut indiquer les étapes.
+%Il peut s'agir d'étapes envisagées initialement et qui peuvent être poursuivies telles quelles ou amendées.
+%Il peut s'agir d'étapes nouvelles, le chemin jusqu'à la solution se révélant plus long que prévu.
+
+Comme perspective de recherche, nous pouvons très bien imaginer ajouter des modules à ce projet pour améliorer les résultats produits pour satisfaire l'analyse de la satisfaction client en magasin.
+
+%---------------------------------------------------------------------------------------------------------
+
+%\nocite{*} % à supprimer, les citations dans le rapports doivent suffire à générer la bibliographie nécessaire et suffisante à la compréhension du travail (ici, cela sert à générer une "fausse" bibliographie dans ce modèle de rapport)
+
+\bibliography{rapport}
+
+\listoffigures{}
+
+\listoftables{}
+
+%\listofalgorithms{}
+
+\appendix
+
+%\chapter{De la citation}
+%\label{ann:Citations}
+
+%La loi n'autorise~:
+%\begin{itemize}
+   %\item d'une part, que les copies ou reproductions strictement réservées à l'usage privé du copiste et non destinées à une utilisation collective~;
+   %\item d'autre part, que les analyses et les courtes citations dans un but d'exemple et d'illustration.
+%\end{itemize}
+%C'est ce second point qui nécessite, semble-t-il, quelques éclaircissements dans le cadre de la production d'un rapport, notamment dans sa partie bibliographique.
+
+%Les citations obéissent à quelques règles de \emph{visibilité} et de bon sens que nous précisons ci-dessous dans différents cas.
+
+%\section{Citations courtes}
+
+%Les citations courtes se font <<~en ligne~>> en mettant la copie du texte~:
+%\begin{enumerate}
+   %\item en italique~;
+   %\item entre guillemets~;
+   %\item suivie de la référence à l'\oe uvre dont elle est extraite.
+%\end{enumerate}
+
+%Ainsi donc, nous pourrions écrire que \emph{<<~[s]i on est trop jeune, on ne juge pas bien [;] [s]i on est trop vieil, de même~>>} \cite{Pascal-1671}.
+
+%Il s'agit de mettre parfaitement en évidence l'emprunt à un auteur et de créditer cet auteur.
+
+%\bigskip
+
+%Sur l'exemple, on notera les parties de textes mises entre crochets.
+%Il s'agit des parties qui ont été modifiées vis-à-vis de l'original pour convenir à leur insertion dans ce texte.
+%En l'occurrence, il s'agit de deux phrases que l'on a placées ici en subordonnée.
+
+%La plus importante de ces marques est l'ellipse (inutilisée ici), notée <<~[...] ~>>, qui correspond à une partie de texte supprimée.
+%Cela correspond généralement à une digression sans importance pour le propos.
+%En revanche, omettre de préciser que l'on a tronqué la citation est un moyen courant pour tromper le lecteur sur la pensée originelle~!
+
+%\section{Citations <<~longues~>>}
+
+%Les citations plus longues, de quelques phrases, voire paragraphes, utilisent un format spécifique, comme illustré ci-dessous.
+%Il s'agit de mettre toute la citation dans un, voire plusieurs, paragraphes endentés en respectant les consignes précédentes.
+
+%Par exemple, si l'on souhaite conserver l'emprunt précédent dans son format d'origine, nous aurons~:
+%\begin{quote}
+   %\emph{<<~Si on est trop jeune, on ne juge pas bien.
+%Si on est trop vieil, de même.
+%Si on n'y songe pas assez, si on y songe trop, on s'entête, \& l'on ne peut trouver la vérité.~>>} \cite{Pascal-1671}
+%\end{quote}
+
+%\section{Citations en langue étrangère}
+
+%Lorsque la citation provient d'un texte écrit dans une langue autre que le français, généralement l'anglais, la règle de base reste la même, à savoir copier le texte d'origine tel quel afin d'assurer son intégrité.
+%Une traduction sera fournie en note de bas de page (ce qui permettra de détecter une éventuelle incompréhension du propos...).
+
+%\section{Copie de schémas}
+
+%Les schémas, au même titre que les textes, sont des \oe uvres de l'esprit soumises au droit d'auteur et qui ne peuvent donc être éventuellement recopiées qu'avec parcimonie et en citant la source dans la légende.
+
+%\section{Plagiat}
+%\label{ann:Plagiat}
+
+%Toute autre usage de la citation relève du plagiat, plus ou moins éhonté suivant les modifications qui sont apportées au texte d'origine.
+
+%Par exemple, le texte suivant~:
+%\begin{quote}
+   %Dans le monde réel, très rares sont les situations où l'on serait capable d'effectuer une partition nette d'un ensemble d'objets en des parties disjointes, voire même aux frontières clairement établies.
+%La gradualité du passage entre des classes différentes aux frontières non reconnaissables n'est-elle pas l'une des motivations essentielles, sinon la première, qui furent à l'origine de la naissance de la théorie des sous-ensembles flous.
+%Les techniques floues de classification sont souvent nées de la tentative de généralisation de techniques déjà existantes d'après \cite{Khodja-97}.
+%\end{quote}
+%est une <<~citation~>> \emph{maladroite} de~:
+%\begin{quote}
+   %\emph{<<~En effet, dans le monde réel qui nous entoure, très rares sont les situations où l'on serait capable d'effectuer une partition nette d'un ensemble d'objets en des parties disjointes, voire même aux frontières clairement établies.
+%La gradualité du passage entre des classes différentes aux frontières non reconnaissables n'est-elle pas l'une des motivations essentielles, sinon la première, qui furent à l'origine de la naissance de la théorie des sous-ensembles flous [ZAD65].
+%L'introduction du concept de fonction d'appartenance dans des techniques de classification, et ce, très rapidement après la parution de l'article séminal de Zadeh, et les différents travaux qui le suivirent, témoignent de la fertilité de l'apport de la théorie des sous-ensembles flous au vaste champ de la classification, qui y trouve un cadre beaucoup plus naturel que celui offert par la théorie classique des ensembles.~>>} \cite{Khodja-97}
+%\end{quote}
+
+%En effet, la première <<~citation~>> semble exprimer un point de vue partagé par d'autres auteurs plutôt qu'une véritable citation.
+%De plus, il est possible de ne l'associer qu'à la dernière phrase et pas à l'ensemble du paragraphe.
+
+\bigskip
+
+%Comme autre exemple, le texte suivant~:
+%\begin{quote}
+%La problématique de l'intégration repose sur la standardisation de données internes à l'entreprise, mais aussi des données externes.
+
+%Si on prend l'exemple d'une entreprise on aura besoin de ses données internes et externes c'est-à-dire celles des clients et fournisseurs de cette entreprise.
+
+%Ce n'est qu'avec une bonne intégration que l'on peut offrir une vision homogène, complète et véritablement transverse de l'entreprise.
+%Pour cela il faut que le système d'information de l'entreprise soit parfaitement structuré, maîtrisé et d'un bon niveau d'intégration.
+%Si tel n'est pas le cas, l'entrepôt de données ne pourra pas être mis en \oe uvre à cause de la qualité des données qui reste mauvaise.
+%\end{quote}
+%est un plagiat manifeste, avec tentative de dissimulation, de~:
+%\begin{quote}
+%\emph{<<~La problématique de l'intégration repose sur la standardisation de données internes à l'entreprise, mais aussi des données externes (provenant par exemple de clients ou de fournisseurs).}
+
+%\emph{Ce n'est qu'au prix d'une intégration poussée que l'on peut offrir une vision homogène et véritablement transverse de l'entreprise.
+%Ce[la] suppose que le système d'information de l'entreprise en amont soit bien structuré, bien maîtrisé, et bénéficie déjà d'un niveau d'intégration suffisant.
+%Si tel n'est pas le cas, la mauvaise qualité des données peut empêcher la mise en \oe uvre de l'entrepôt de données.~>>}\footnote{\emph{Entrepôt de données}. Wikipedia, 3 février 2010, \url{http://fr.wikipedia.org/wiki/Entrepôt_de_données}}
+%\end{quote}
+
+%\vspace{2\baselineskip}
+
+%En conclusion, les opérations de <<~copier-coller~>> sont permises sous les conditions restrictives~:
+%\begin{itemize}
+   %\item qu'elles soient parfaitement identifiables~;
+   %\item que les références aux sources soient données~;
+   %\item qu'elles soient courtes~;
+   %\item qu'elles soient peu nombreuses.
+%\end{itemize}
+
+%En revanche, il est possible, et même tout à fait recommandé, de \emph{reformuler}, avec son vocabulaire et dans le contexte du rapport, des \emph{idées} empruntées à d'autres auteurs.
+%Dans ce cas-là, l'honnêteté intellectuelle se <<~limite~>> à la référence aux sources.
+
+%\bigskip
+
+%\begin{center}
+  % \fcolorbox{red}{yellow}{
+     % \color{red}
+      %\large
+      %\begin{minipage}[c]{0.8\columnwidth}
+         %Les contrevenants à ces règles élémentaires d'honnêteté intellectuelle seront déferrés devant la section disciplinaire de l'université.
+
+        % Une fraude caractérisée entraîne au minimum l'annulation de l'épreuve et jusqu'à l'expulsion de l'université assortie d'une interdiction de passer tout examen public pendant cinq ans~!
+     % \end{minipage}
+  % }
+%\end{center}
+
+%\chapter{Rappels}
+%\label{ann:Rappels}
+
+%Un rappel contient, comme son nom l'indique, des éléments \emph{a priori} connus mais qu'il est bon de rappeler, notamment lorsqu'il s'agit de définitions (le terme <<~glossaire~>> est alors préférable), de formules mathématiques, d'algorithmes standards, etc.
+
+%Ces éléments-là peuvent être fournis de manière éparse, c'est-à-dire sans formuler les liens logiques entre les eux, sans développer un discours parfaitement cohérent comme dans le reste du document.
+
+%Par exemple, on peut écrire de manière sèche que~: <<~La moyenne se calcule différemment suivant que les individus sont séparés, groupés ou seule leur fréquence fournie.
+%On obtient respectivement~:
+%\begin{eqnarray}
+    %\mu & = & \frac{1}{n} \sum_{i=1}^n x_i\\
+    %\mu & = & \frac{1}{N} \sum_{i=1}^m x_i \times n_i\\
+    %\mu & = & \sum_{i=1}^m x_i \times f_i
+%\end{eqnarray}
+%avec~:
+%\begin{itemize}
+   %\item $N = \sum_{i=1}^m n_i$~;
+   %\item $f_i = \frac{n_i}{N}$.~>>
+%\end{itemize}
+
+%\chapter{D'autres rappels}
+%\label{ann:RappelsInutiles}
+
+%Bien sûr, le rapport ne doit pas devenir une accumulation de rappels divers.
+%Si tel était le cas, cela signifierait que le travail bibliographique est devenu une étude critique et détaillée d'un large \emph{corpus} de connaissances.
+%Par exemple, tous les algorithmes de classification <<~classiques~>> (plus proches voisins, machines à vecteur de support, analyse en composantes principales, etc.) pourraient être passés en revue en vue de résoudre le (ou une partie) du problème du rapport.
+
+%Dans ce cas-là, une étude détaillée, même si elle s'applique à des éléments <<~bien connus~>> devient nécessaire, les propositions devant sans doute être traitées chacune dans un chapitre dédié.
+
+%La mise en perspective avec le problème à résoudre est indispensable, autrement on se retrouverait devant un simple catalogue détaillé sans autre intérêt qu'une certaine exhaustivité, le soin étant laissé au lecteur de comprendre en quoi cette énumération de propositions issues de la littérature est utile.
+%En d'autres termes, l'étude doit apporter une plus-value.
+
+%\chapter{Mesures détaillées}
+%\label{ann:Mesures}
+
+%Les tableaux de mesures qui apparaissent dans cette annexe doivent référencer les formules, algorithmes et parties du rapport auxquels ils sont rattachés.
+
+%Par exemple, le tableau~\ref{tab:MesuresAlgorithme} contient l'ensemble des paramètres obtenus par l'algorithme~\ref{alg:Proposition} (en page~\pageref{alg:Proposition}) ayant servi à l'élaboration du tableau~\ref{tab:Courbes} (en page~\pageref{tab:Courbes}) \emph{via} la formule~\ref{eq:Proposition} (en page~\pageref{eq:Proposition}).
+
+%\begin{table*}
+   %\centering
+   %\begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+      %\hline
+      %entrée & $a$ & $p$ & $m_1$ & $m_2$ & $\kappa$ & $\alpha$ & $\alpha'$ & \ldots & $z$ \\
+      %\hline
+      %\hline
+      %\texttt{img000.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img001.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img002.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img003.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img004.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img005.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img006.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img007.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img008.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img009.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img010.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img011.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img012.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img013.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img014.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img015.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+      %\texttt{img016.jpg} & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots & \ldots\\
+     % \hline
+   %\end{tabular}
+   %\caption{Quelques mesures fournies par l'algorithme~\ref{alg:Proposition}}
+   %\label{tab:MesuresAlgorithme}
+%\end{table*}
+
+\chapter{Fiches de lecture}
+\label{ann:FichesLecture}
+
+%Cette annexe est \emph{obligatoire}, fiches détaillées et tableau récapitulatif.
+
+%\emph{Pour chaque article et ouvrage de la bibliographie} (éventuellement pour un site \emph{web} \emph{complet} et \emph{pérenne}), il faut établir une fiche de lecture -- succincte -- comportant (i)~un résumé <<~objectif~>> et (ii)~une analyse.
+
+%Si l'article ou l'ouvrage n'apporte rien à l'étude, il est inutile de l'insérer dans la bibliographie et de le référencer, quand bien même on y aurait consacré un temps important (cela sera noté dans les fiches de suivi).
+\section{Detecting and Tracking of Multiple People in Video based on Hybrid Detection and Human Anatomy Body Proportion}
+
+\subsection{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : Detecting and Tracking of Multiple People in Video based on Hybrid Detection and Human Anatomy Body Proportion.
+	\end{flushleft}
+	\textbf{Auteurs} : El Maghraby Amr, Abdalla Mahmoud, Enany Othman et Y. EL
+Nahas Mohamed.\\\\
+	\textbf{Université} : Zagazig University et Elazhar University\\\\
+	\textbf{Journal} : International Journal of Computer Applications (0975 - 8887)
+- Volume 109 - No. 17\\\\
+	\textbf{Date de parution} : Janvier 2015\\\\
+	\textbf{Termes généraux} : Video Processing, Computer vision systems, Human detection and tracking, Clustering.\\\\
+	\textbf{Mots Clés} : Video Processing, Human detection and tracking,  Viola-Jones upper body, Skin detection, Computer vision systems, Biometrics.\\\\
+	\textbf{Lien} : \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.
+695.6435&rep=rep1&type=pdf}
+	
+\subsection{Situation des auteurs}
+Trois des auteurs ont étudiés dans le domaine du système de l'ingénierie informatique dont l'un a étudié à l'université de Elazhar. Abdalla Mahmoud a étudié l'ingénierie de communication. Cette thèse est un achèvement du travail de recherche qu'ils avaient commencé. Ils ont déjà publié deux articles scientifiques. L'un des articles traite d'un système de détection hybride de visage utilisant la combinaison de la méthode Viola-Jones et une méthode de détection de la peau. Le second article traite de la détection et l'analyse d'informations sur les parties d'un visage en utilisant Viola-Jones et une approche géométrique.
+
+\subsection{Introduction}
+Cette thèse traite d'une méthode scientifique totalement automatisé mis en place par les auteurs pour répondre à une problématique récurrente dans le domaine de l'interaction Homme-Machine : la détection et le traçages de personne. Plus précisément, ils travaillent sur la détection et le traçage de plusieurs personnes en mouvement sur une vidéo.
+
+\subsection{Méthode de détection}
+Leur méthode se découpe en 3 phases :
+	\begin{enumerate}
+		\item La première phase consiste à analyser la vidéo image par image et d'y
+appliquer un algorithme. Cet algorithme va appliquer des détecteurs
+primaires sur les images basé sur l'algorithme de détecteurs d'objets
+en cascade de Viola-Jones afin de détecter le haut du corps humain
+qu?il va placer dans une boîte.
+		\item Suite à la première phase, les auteurs ont récupéré des suites d'images
+contenantes des boîtes entourant le haut des corps humain détecter
+par l'algorithme. A l'aide des proportions anatomique du corps humain,
+ils vont parvenir à localiser la position de la tête et du visage
+dans la boîte. La résultat de cette étape retourne des détections d'humain
+positive et négative.
+		\item La troisième étape sert à identifier au mieux la différence entre les
+bonnes et les mauvaises détections. Pour cela, ils vont utiliser la détection
+de la couleur de peau sur la partie du visage qui a été localisé
+à l?étape 2.
+	\end{enumerate}
+		
+\subsection{Méthode de traçage}
+Le traçage se fait en répétant la méthode de détection sur chaque image
+de la vidéo. A chaque image, ils vont récupérer des informations sur les blocs
+valides de détections du haut du corps humain et en faire des moyennes de
+largeur et longueur du visage. Puis, ils qualifie les images en fonction de leurs
+moyennes via la méthode de classification (k-means). De cette manière, pour
+chaque image, ils détermine l'appartenance des blocs à une personne. On
+peut donc suivre les traces de cette personne.
+
+\subsection{Conclusion}
+Cette thèse est relativement complète et explique très bien le processus
+de détection. Cette méthode correspond parfaitement à mon sujet d'analyse
+de la satisfaction client via une vidéo puisque je vais avoir besoin de trouver
+une méthode de détection de personnes en mouvement sur une vidéo.
+
+\section{Rapid object detection using a boosted cascade of simple features}
+
+\subsection{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : Rapid object detection using a boosted cascade of simple features.
+	\end{flushleft}
+	\textbf{Auteurs} : Paul Viola et Michael Jones.\\\\
+	\textbf{Conférence} : Conference on Computer Vision and Pattern Recognition\\\\
+	\textbf{Date de parution} : 2001\\\\
+	\textbf{Lien} : \url{https://ieeexplore.ieee.org/document/990517}
+	
+\subsection{Situation des auteurs}
+Paul Viola, ancien professeur au MIT et vice-président des sciences pour
+Amazon Air est chercheur en vision par ordinateur. Michael Jones travaillais
+en 2001 pour le laboratoire Compaq CRL situé à Cambridge.
+
+\subsection{Introduction}
+Cette publication traite d?un framework robuste de détection d?objet
+visuel rapide et possédant un taux de précision élevé mis en place par les
+auteurs.
+
+\subsection{Définition}
+\subsubsection{Image intégrale}
+L'image intégrale peut être calculée à partir d'une image en utilisant quelques opérations par pixel. Une fois calculée, chacune de ces caractéristiques peut être calculée à n'importe quelle échelle ou emplacement en temps constant.
+
+\subsection{Méthode de détection}
+Leur méthode se découpe en 3 clés de contributions :
+\begin{enumerate}
+	\item La première phase est l?introduction d?une nouvelle représentation
+d?image appelée «Image intégrale», qui permet de calculer très rapidement
+les caractéristiques utilisées par le détecteur.
+	\item La deuxième phase est un algorithme d?apprentissage, basé sur Ada-
+Boost, qui sélectionne un petit nombre de caractéristiques visuelles
+critiques de Haar et produit des classificateurs extrêmement efficaces.
+	\item La troisième étape est une méthode pour combiner des classificateurs
+dans une "cascade" qui permet d?éliminer rapidement les régions
+d?arrière-plan de l?image tout en se concentrant sur les régions
+prometteuses.
+\end{enumerate}
+Deux caractéristiques sont relevé pour détecter les visages : La première
+caractéristique mesure la différence d?intensité entre la région des yeux et la
+région sur les joues supérieures. La fonctionnalité tire profit de l?observation
+que la région des yeux est souvent plus sombre que les joues. La deuxième
+caractéristique compare les intensités dans les régions des yeux aux intensités
+sur la région du nez.
+
+\subsection{Performance}
+Fonctionnant sur des images de 384 x 288 pixels, les visages sont détectés
+à 15 images par seconde sur un Intel Pentium III 700 MHz classique.
+
+\subsection{Conclusion}
+Cette article explique une méthode rapide de détection de visage en sélectionnant
+des caractéristiques grâce à une variance de l?algorithme AdaBoost
+et en apprenant ses caractéristiques à un classificateur.
+
+\section{You Only Look Once: Unified, Real-Time Object Detection}
+
+\subsection{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : You Only Look Once: Unified, Real-Time Object Detection
+	\end{flushleft}
+	\textbf{Auteurs} : Joseph Redmon, Santosh Divvala, Ross Girshick et Ali Farhadi.\\\\
+	\textbf{Université} : University of Washington\\\\
+	%\textbf{Conférence} : Conference on Computer Vision and Pattern Recognition\\\\
+	\textbf{Date de parution} : 8 juin 2015\\\\
+	\textbf{Date de dernière révision} : 9 mai 2016\\\\
+	%\textbf{Termes généraux} : Video Processing, Computer vision systems, Human detection and tracking, Clustering.\\\\
+	%\textbf{Mots Clés} : Video Processing, Human detection and tracking,  Viola-Jones upper body, Skin detection, Computer vision systems, Biometrics.\\\\
+	\textbf{Lien} : \url{https://arxiv.org/abs/1506.02640}
+	
+\subsection{Situation des auteurs}
+Joseph Redmon est un informaticien passionné d?apprentissage automatique, d?analyse de données, ainsi que de conception et de mise en ?uvre de programmes de bas niveau. Il travaille sur la vision par ordinateur. Il possède son propre site web : \url{https://pjreddie.com/}.\\\\
+Santosh Divvala est chercheur scientifique chez AI2. Son intérêt principal est la vision par ordinateur, en particulier le problème de compréhension des images.\\\\
+Ross Girshick est chercheur à Facebook AI Research (FAIR) et travaille sur la vision par ordinateur et l'apprentissage automatique.\\\\
+Ali Farhadi est professeur associé au département d'informatique et d'ingénierie de l'Université de Washington. Il s'intéresse principalement à la vision par ordinateur, à l'apprentissage automatique, à l'intersection du langage naturel et de la vision, à l'analyse du rôle de la sémantique dans la compréhension visuelle et au raisonnement visuel
+
+\subsection{Introduction}
+Cette publication traite d'une nouvelle approche de détection d'objet visuel en temps réel. Ils décrivent la détection d'objet comme un problème de régression dans des boîtes englobantes séparées dans l'espace associées à des probabilités de classe. Un seul réseau de neurones prédit les limites et les probabilités de classe directement à partir d'images complètes.
+
+\subsection{Méthode de détection}
+Leur méthode de détection se base sur un seul réseau de neurones. Ils unissent les composants de la détection d'objet dans un seul réseau. Le réseau utilise des caractéristiques de l'ensemble de l'image pour prédire des cadre de sélections. Il prédit tous les cadres de sélection de toutes les classes possibles sur une seule image en même temps.\\\\
+L'algorithme va séparer l'image d'entrée en une grille de dimension SxS. Chaque case de la grille va prédire B boîtes et les scores de confiance pour ses boîtes. Ces scores de confiance reflètent le degré de confiance du modèle sur le fait que la boîte contient un objet et la précision avec laquelle il prédit la boîte.
+Je ne détaille pas le calcul du score de confidence.\\\\
+Chaque boîte contient 5 prédictions : x, y, w, h et le score de confiance. Les coordonnées (x, y) représentent le centre de la boîte par rapport aux limites de la cellule de la grille. La largeur et la hauteur sont prédites par rapport à l'image entière. Chaque cellule de grille prédit également C probabilité conditionnelle,
+P(Classe i | Objet). Ces probabilités sont conditionnées par la cellule de la grille contenant un objet.
+
+\subsection{Désigne du réseau}
+Ce modèle de détection d'objet est implémenter comme un réseau de neurone de convolution et est évaluer via le jeu de données de détection de PASCAL VOC.
+Les couches convolutives initiales du réseau extraient les caractéristiques de l'image, tandis que les couches entièrement connectées prédisent les probabilités et les coordonnées de sortie. Le réseau comporte 24 couches convolutives suivies de 2 couches entièrement connectées. Il utilise des couches de réduction 1x1 suivi de couches convolutives de 3x3. 
+
+\subsection{Performance}
+Le modèle YOLO traite les images en temps réel à 45 images par seconde  sans traitement par lots sur un Titan X GPU. Une version réduite du réseau, Fast YOLO, traite 155 images par seconde. Par rapport aux autres systèmes de détection, YOLO fait plus d'erreurs de localisation mais est moins susceptible de prédire de faux positifs. YOLO atteint plus de deux fois la précision moyenne des
+autres systèmes de détection en temps réel.
+
+\subsection{Conclusion}
+Cette article explique une méthode en temps réel de détection d'objet en utilisant un réseau de neurone de convolution sur l'image complète. 
+
+\section{REAL-TIME MULTIPLE PEOPLE TRACKING WITH DEEPLY LEARNED CANDIDATE SELECTION AND PERSON RE-IDENTIFICATION}
+\subsection{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : REAL-TIME MULTIPLE PEOPLE TRACKING WITH DEEPLY LEARNED CANDIDATE SELECTION AND PERSON RE-IDENTIFICATION
+	\end{flushleft}
+	\textbf{Auteurs} : Long Chen, Haizhou Ai, Zijie Zhuang et Chong Shang.\\\\
+	\textbf{Université} :  Tsinghua University\\\\
+	\textbf{Date de parution} : 12 septembre 2018\\\\
+	%\textbf{Date de dernière révision} : \\\\
+	\textbf{Sujets} : Computer Vision and Pattern Recognition.\\\\
+	\textbf{Lien vers le document} : \url{https://arxiv.org/abs/1809.04427v1}
+	
+\subsection{Situation des auteurs}
+Long Chen, Haizhou Ai, Zijie Zhuang et Chong Shang sont 4 chercheurs du département informatique de l'université de Tsinghua.
+
+\subsection{Introduction}
+Cette publication traite d'une nouvelle approche de détection et de suivi d'une personne en temps réel. Ils proposent de détecter les détections de personne non fiable en collectant les candidats à partir des résultats de détection et de suivi d'une personne. Dans certaine situation, les système de détection et de suivi peuvent se compléter. D'une part, les détections fiables du traqueur peuvent être associé à court terme au détection en cas de détection manquante ou non précise.
+D'autre part, les résultats fiables des détections permettent d'éviter les écarts de détection des traqueurs. 
+Afin de sélectionner en temps réel le candidat optimal, il utilise une nouvelle fonction de scoring basé sur un réseau de neurone convolutif.
+
+\subsection{Méthode de détection}
+Leur méthode de détection se base sur la sélection de candidat entre les méthodes de détection et de traçage.\\\\
+Tout d'abord, ils mesurent tous les candidats à l'aide d'un score de notation unifié. Pour former cette fonction de score, ils fusionnent un classificateur d'objets entraîner de manière discriminatoire avec le degré de confiance du traqueur. Puis, à l'aide de la suppression non maximal effectuer sur les scores estimés, il obtiennent les candidats sans redondance.\\\\
+Pendant la procédure d'entrainement de leur réseau, ils échantillonnaient aléatoirement des régions d'intérêts (candidat à classer avec les paramètres x0,y0,w,h) autour des vrais boîtes de détection et les considéraient comme des exemples positifs. Ils prenaient le même nombre de régions d'intérêts du fond de l'image (background) comme des exemples négatifs. De cette manière, le réseau apprend à reconnaître les espaces spatial des objets.\\\\
+
+\subsection{Désigne du réseau}
+Leur classificateur se base sur le réseau de neurone entièrement convolutif basé sur une région de l'image (R-FCN). La carte des scores de l'image sont prédit en utilisant un réseau de neurone convolutif avec une architecture codeur-décodeur. La partie codeur est la couche légère centrale du réseau pour une performance en temps réel. Ils ajoutent la partie décodeur avec un sur-échantillonnage pour augmenter les cartes de scores des résolutions spatiales pour une classification future.
+
+\subsection{Méthode de traçage}
+La méthode de traçage consiste à prédire la localisation de chaque trace existante en utilisant le filtre de kalman. 
+Ces prédictions sont adopter pour éviter les détections fausses causer par des variations visuelles des propriétés des objets ou par les occlusions dans les scènes de passage de personnes. Cependant, ces prédictions ne sont pas utilisable à long termes pour le traçage. Afin de mesurer le degré de confiance du filtre de kalman dont la précision peut décroitre s'il n'est pas mis à jour par détection au bout d'un certain temps, il utilise un indice de confiance par tracklet en utilisant des informations temporel.\\\\
+Une trace peut être séparer en plusieurs tracklet.
+
+\subsection{Méthode d'association}
+Nous obtenons un candidat obtenu via la méthode de détection et un candidat obtenu via la méthode de traçage. Il vont utiliser la suppression non maximal pour sélectionner le candidat idéal.\
+
+\subsection{Méthode de comparaison}
+Pour une meilleure précision, ils utilisent un réseau de neurone de comparaison des traits de caractères entre deux images afin de savoir s'il s'agit de la même personnes ou non.
+
+\subsection{Association hiérarchique des étapes de détection et de traçage}
+Premièrement, il appliquent l'association de données sur les candidats issus de la détection en utilisant l'apparence avec un seuil Td pour la distance maximal.\\\\
+Ensuite, ils associent les candidats restant avec les traces non associé basé sur la jointure entre les candidats de détection et les candidats de traçages. Ils ne mettent à jour les représentation d'apparence que lorsque les candidats de traçage sont associer à une détection.
+La mise à jour est effectuer en sauvegardant les caractéristiques de ré identification (ReID) de la détection associé. \\\\
+Ensuite, les nouvelles traces sont initialiser avec les résultats des détections restantes.\\\\
+Avec l'association de données hiérarchique, ils ont seulement besoin d'extraire les fonctionnalités ReID pour les candidats de détection une fois par image. En combinant cela avec l'ancienne fonction de scoring efficace et les degrés de confiance des tracklet, leur infrastructure peut fonctionner à une vitesse en temps réel.
+
+\subsection{Performance}
+Ils utilisent SqueezeNet [16], la couche centrale de R-FCN pour la performance en temps réel. Leur réseau de neurone convolutif, composé de SqueezeNet et du décodeur, ne coûte que 8 ms pour estimer les cartes de scores pour une image d'entrée de la taille de 1152x640 sur un GPU GTX1080Ti.\\\\
+Ils fixent k=7 pour les cartes de scores sensible à la position, et entraîne le réseau en utilisant l'optimiseur RMSprop avec un taux d'apprentissage de 1e-4 et une taille de lot de 32 pour 20 000 itérations.\\\\
+Les données de formation pour la classification des personnes sont collectées à partir de MSCOCO.
+
+\subsection{Conclusion}
+Cette article explique une méthode en temps réel de détection de personne en utilisant une infrastructure composer de plusieurs partie : détection de personnes ressemblantes, vérification de détection des personne via l'association de candidat de détection et de traçage, utilisation de caractéristique de ré identification. \\\\
+Ils traitent des détections non fiable en sélectionnant les candidats parmi les sorties de détection et de traçage. \\\\
+La fonction de notation pour la sélection des candidats est formulée par un R-FCN efficace, qui partage les calculs sur toute l'image. \\\\
+Ils améliorent la capacité d'identification des occlusions en introduisant les fonctionnalités ReID pour l'association des données. \\\\
+Pour conclure, le traqueur proposer permet d'obtenir des résultats en temps réel et des performances de pointe sur la référence MOT16.
+
+\section{Bounding Box Embedding for Single Shot Person Instance Segmentation}
+\subsection{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : Bounding Box Embedding for Single Shot Person Instance Segmentation
+	\end{flushleft}
+	\textbf{Auteurs} : Jacob Richeimer et Jonathan Mitchell.\\\\
+	\textbf{Date de parution} : 20 juillet 2018\\\\
+	%\textbf{Date de dernière révision} : \\\\
+	\textbf{Sujets} : Computer Vision and Pattern Recognition.\\\\
+	\textbf{Lien vers le document} : \url{https://arxiv.org/abs/1807.07674}
+	
+\subsection{Situation des auteurs}
+Jacob Richeimer est le directeur de l'entreprise nommé OCTI, INC. L'entreprise OCTI INC développe la technologie de vision par ordinateur et d'apprentissage automatique de l'application de messagerie vidéo en réalité augmentée.\\\\
+Notamment: estimation de la pose humaine 3D mobile en temps réel, segmentation d'instances sémantiques et reconnaissance des actions squelettiques. Langues: Python. Outils: Keras, Tensorflow.\\\\
+Jonathan Mitchell est ingénieur dans cette entreprise et se concentre sur la vision par ordinateur, l'apprentissage en profondeur (deep learning), et en particulier la détection de pose humaine et la segmentation d'instances.
+
+\subsection{Introduction}
+Cette publication présente une nouvelle approche pour la tâche de segmentation d'instance d'une personne en utilisant un modèle en single-shot (en un coup). Le modèle proposer emploie un réseau de neurone de convolution qui est entraîné pour prédire aussi bien les masques de segmentation par classe (ici les personnes) que les boîtes englobantes des instances d'objet (de personnes) auxquelles chaque pixel appartient. Les auteurs de cette article cherche à associer un pixel à l'instance de l'objet (de la personne) auquel il appartient.
+
+\subsection{information}
+\subsubsection{Deux approches de détection}
+\begin{enumerate}
+	\item L'approche "Top-down" consiste à d'abord localiser les instances de l'objet puis à obtenir le masques de pixel pour chaque instance détecter.
+	\item l'approche "Bottom-up" consiste à d'abord déterminer la classe d'objet de chaque pixel puis à les grouper en une seule instance d'objet. \\\\
+\end{enumerate}
+Dans cet article, les auteurs adoptent l'approchent "Bottom-up" et propose une méthode simple qui ne requiert qu'un minimum de calculs en plus des actuelle approche de l'état de l'art sur la segmentation sémantique catégorique.\\\\
+L'approche "Bottom-up" demande, après la segmentation sémantique, d'ajouter des étapes supplémentaires de regroupement de pixels en instances.
+
+\subsection{Méthode de détection}
+Ils ont développés une approche "single-shot" de segmentation d'instance de personne. Pour une image donnée, cela consiste d'abord à classifier chaque pixels comme appartenant à une personne ou au fond de l'image, puis à regrouper les pixels qualifiés comme personne dans une instance de personne.
+
+\subsubsection{Segmentation sémantique de personne}
+Ils utilise un réseau de neurone de convolution standard pour faire la segmentation. Ils prédissent pour chaque emplacement de pixel, la probabilité qu'il appartient à une instance de personne.
+
+\subsubsection{Proposition de boîte de détection}
+Dans le but de prédire l'instance de personne à laquelle appartient chaque pixel, chaque emplacement de pixel est associé à une "proposition" ou à une "ancre". Une "ancre" est une boîte englobante qui est centré sur ce pixel et à une largeur w et une hauteur h.\\\\
+Pour chaque pixel, le réseau prédit les décalages (dx, dy, dw, dh) entre sa boîte d'ancrage et la boîte englobante de l'instance à laquelle il appartient.
+
+\subsubsection{Regroupement de pixels en instance}
+Dans cet article, les auteurs ont choisi de faire correspondre les coordonnées des pixels pour qu'ils soient compris dans les coordonnées du cadre de sélection de l'instance à laquelle appartient chaque pixel.\\\\
+Cette méthode n'est pas parfaite, en effet, il est possible que plusieurs instances se chevauchent et que les boîtes englobantes soient presque identiques.\\\\
+Le point positif est que cette méthode est facile à implémenter à la suite des architecture de segmentation sémantique déjà existante.\\\\
+La méthode regroupement des pixels à 2 étapes qui se suivent :
+\begin{enumerate}
+	\item La sélection de boîte globale est la première étape. Les auteurs traitent la valeur de la probabilité attribuée à chaque emplacement de pixel comme la valeur de confiance associée au cadre de sélection prévu pour cet emplacement. Ils recueillent toutes les boîtes englobantes prédites qui correspondent aux pics locaux de la carte de segmentation sémantique et ont un indice de confiance supérieur à un seuil (t = 0.6). La suppression non-maximal est ensuite appliquée aux boîtes englobantes collectées pour obtenir les détection globales de la boîte englobante Bg pour l'image donnée.
+	\item L'assignation de pixel à une instance est la seconde étape. Sp est l'ensemble des pixels trouvé comme personne. Chacun de ses pixels a besoin d'être assigner à une des instances globales des boîtes englobantes Bg de l'étape précédente. Pour chaque location de pixel xi dans Sp, ils prennent la boîte englobante correspondante bi, et effectue l'intersection sur l'union entre bi et chacune des boîte englobante globale Bg. La localisation du pixel est ensuite assigné à la boîte englobante Bg. Si toutes les boîtes de Bg se chevauchent avec bi avec un score IoU inférieur à un seuil tiou, alors la localisation du pixel xi est supprimé de Sp. Ce pixel est supposé être un résultat faux positif de la segmentation sémantique et n'est attribué à aucune des instances.
+\end{enumerate}
+
+
+\subsection{Jeu de données}
+Ils ont utilisé le jeu de données COCO pour l'apprentissage et l'évaluation. Ils ont réaliser l'apprentissage seulement avec les images d'apprentissage contenant des annotation de personnes, soit 64 115 images.
+
+\subsection{Architecture du modèle}
+Les auteurs utilisent le réseau de base ResNet-50, qu'ils ont choisi pour son équilibre riche en fonctionnalités et sa consommation de mémoire, auquel ils y attachent le module Atrous Spatial Pyramid Pooling et les couches de décodeurs DeepLabv3 +.\\\\
+La seule divergence par rapport à DeepLabv3 + réside dans le fait qu?en plus de la couche de convolution finale 1x1 avec un filtre par classe (dans leur cas, il n'existe qu'une seule classe) au-dessus des cartes de caractéristiques de sortie du décodeur, ils disposent d'une couche de convolution supplémentaire 1x1 avec quatre filtres pour prédire les décalages de la boîte englobante dense.
+
+\subsection{Conclusion}
+Cette article présente une méthode unique pour la segmentation d'instances d'objets et montré son efficacité lors de la segmentation d'instances de personnes.
+
+%\section{Titre d'un article}
+
+%On introduit rapidement le problème traité par l'article et on le référence afin de créer un hyper-lien vers la bibliographie \cite{Pascal-1671} (et inversement).
+
+%\section{Résumé}
+
+%Le résumé doit faire apparaître l'idée phare de l'article (ou les idées principales d'un ouvrage plus important -- il peut être étudié selon ses différents chapitres).
+%Il faut rapporter les analyses, expérimentations et conclusions établies \emph{par les auteurs}.
+
+%\section{Analyse}
+
+%C'est dans une seconde phase que l'analyse de l'article a lieu.
+%Il s'agit~:
+%\begin{enumerate}
+   %\item de vérifier l'exactitude du document (des erreurs sont toujours possibles, la littérature nous l'apprend~!)~;
+   %\item de critiquer éventuellement les apports de l'article~;
+   %\item surtout d'établir le lien avec le sujet du projet.
+%\end{enumerate}
+
+\chapter{Planification}
+
+%Cette annexe est \emph{obligatoire}.
+
+La figure~\ref{fig:PlanningPrevisionnel} présente le planning élaboré \emph{a priori}...
+
+\begin{figure*}
+% - Utiliser la version étoilée des flottants pour les faire tenir sur deux colonnes
+% - éventuellement utiliser la conditionnelle \ifscreen ... \else ... \fi pour orienter
+%   correctement le planning en fonction de l'orientation du papier (cf.~ci-dessous)
+%   pour l'autoévaluation.
+   \centering
+      \emph{\includegraphics[scale=0.6]{Images/DiagrammeGanttPrevisionnel.png} }
+   \caption{Planification prévisionnelle}
+   \label{fig:PlanningPrevisionnel}
+\end{figure*}
+
+La figure~\ref{fig:PlanningEffectif} présente pour sa part le planning relevé au fur et à mesure de l'avancement du travail.
+
+\begin{figure*}
+   \centering
+      \emph{\includegraphics[scale=0.8]{Images/DiagrammeGanttReel.png} }
+   \caption{Planning effectif}
+   \label{fig:PlanningEffectif}
+\end{figure*}
+
+Discuter les différences entre les deux plannings et les leçons apprises sur la gestion d'un projet de recherche ou de R\&D.
+
+\chapter{Fiches de suivi}
+\label{ann:FichesSuivi}
+
+%Cette annexe est \emph{obligatoire}.
+
+\begin{fichesuivi}{8 octobre 2018}{12 octobre 2018}
+	\tempstravailA{12}{30}
+
+	\begin{travaileffectue}
+		\begin{itemize}
+			\item tâche 1 : Compréhension du sujet ; simplicité ; achevée.
+			\item tâche 2 : Reformulation du sujet ; difficulté : moyenne ; achevée.
+			\item tâche 3 : Recherche générale du sujet sur Wikipédia ; simplicité ; achevée.
+			\item tâche 4 : \'Ecriture du contexte, problématique ; simplicité ; achevée.
+			\item tâche 5 : Lecture de quelques documents (thèses, articles...) sur le sujet ; difficulté : moyenne ; réalisée à  $30$ \%
+		\end{itemize}
+	\end{travaileffectue}
+
+	\begin{travailnoneffectue}
+	\end{travailnoneffectue}
+
+	\begin{echange}
+		\begin{itemize}
+			\item Est ce que l'on garde l'analyse en temps réel ? ; Est ce que la restitution visuelle des résultats est importante ?
+			\item Le temps réel n'est pas une priorité. ; La restitution est utile car elle permet de présenter le résultat au sein du pôle innovation de U GIE IRIS ;
+			\item Les indicateurs sont trop nombreux. Il faut se spécialisé dans un niveau ;
+		\end{itemize}
+	\end{echange}
+
+	\begin{planification}
+		\begin{itemize}
+			\item recherches à effectuer ;
+			\item articles à lire, comprendre et analyser ;
+			\item proposer des indicateurs pertinents ;
+		\end{itemize}
+	\end{planification}
+\end{fichesuivi}
+
+\begin{fichesuivi}{15 octobre 2018}{19 octobre 2018}
+	\tempstravailA{10}{30}
+
+	\begin{travaileffectue}
+		\begin{itemize}
+			\item tâche 1 : Fiche de lecture sur deux documents scientifiques traitant de la méthode Viola-Jones ; difficulté : moyenne ; achevée.
+			\item tâche 2 : Précision des problèmes à résoudre ; difficulté : moyenne ; achevée.
+			\item tâche 3 : Recherche d'une banque de données de vidéos libre de droits ;  réalisée à  $75$ \% ; achevée.
+			%\item tâche 4 : \'Ecriture du contexte, problématique ; simplicité ; achevée.
+			%\item tâche 5 : Lecture de quelques documents (thèses, articles...) sur le sujet ; difficulté : moyenne ; réalisée à  $30$ \%
+		\end{itemize}
+	\end{travaileffectue}
+
+	%\begin{travailnoneffectue}
+		%\begin{itemize}
+			%\item t\^ache 1 : raisons ; reports, annulations ; etc. ;
+		%\end{itemize}
+	%\end{travailnoneffectue}
+
+	\begin{echange}
+		\begin{itemize}
+			%\item questions ;
+			%\item réponses ;
+			%\item éléments de clarification, compréhension ;
+			%\item choix, orientations, redéfinitions ;
+			%\item etc.
+			\item Précision des problèmes du sujet avec Nicolas NORMAND ;
+				\begin{enumerate}
+					\item Méthode de détection de visage.
+					\item Méthode d'identification de 2 personnes identiques d'une image à l'autre.
+					\item Méthode de traçage de personne relié à la méthode d'identification.
+					\item Sous-problème : la gestion des occlusions.
+				\end{enumerate}
+			\item Recherche générale sur toutes les méthodes possibles et performantes lié à notre sujet ;
+			%\item etc.
+		\end{itemize}
+	\end{echange}
+
+	\begin{planification}
+		\begin{itemize}
+			%\item recherches à effectuer ;
+			%\item articles à lire, comprendre et analyser ;
+			%\item codes à développer ;
+			%\item etc.
+			\item Recherche sur les méthodes de détection, de traçage et d'identification récente et performante à effectuer ;
+			\item articles à lire, comprendre et analyser ;
+			%\item proposer des indicateurs pertinents ;
+		\end{itemize}
+	\end{planification}
+\end{fichesuivi}
+
+\begin{fichesuivi}{12 novembre 2018}{18 novembre 2018}
+	\tempstravailA{11}{00}
+
+	\begin{travaileffectue}
+		\begin{itemize}
+			\item tâche 1 : Fiche de lecture sur la méthode de détection YOLO ; difficulté : moyenne ; achevée.
+			\item tâche 2 : Fiche de lecture 2 méthode de détection de personnes en temps réel  ; difficulté : moyenne ; achevée.
+			\item tâche 3 : Recherche d'une banque de données de vidéos libres de droits ; achevée.
+			\item tâche 4 : Recherche d'article sur le tracking d'objet avec code source ; simplicité ; achevée.
+			%\item tâche 5 : Lecture de quelques documents (thèses, articles...) sur le sujet ; difficulté : moyenne ; réalisée à  $30$ \%
+		\end{itemize}
+	\end{travaileffectue}
+
+	\begin{travailnoneffectue}
+		\begin{itemize}
+				\item tâche 1 : Rédaction de l'état de l'art, recherche bibliographique non terminée ;
+			%\item tâche 1 : raisons ; reports, annulations ; etc. ;
+		\end{itemize}
+	\end{travailnoneffectue}
+
+	\begin{echange}
+		\begin{itemize}
+			\item Concentration sur des méthodes avec le code source open source et réutilisable ;
+			%\item questions ;
+			%\item réponses ;
+			%\item éléments de clarification, compréhension ;
+			%\item choix, orientations, redéfinitions ;
+			%\item etc.
+			%\item etc.
+		\end{itemize}
+	\end{echange}
+
+	\begin{planification}
+		\begin{itemize}
+			%\item recherches à effectuer ;
+			%\item articles à lire, comprendre et analyser ;
+			%\item codes à développer ;
+			%\item etc.
+			\item Lire les articles de tracking de personne et en faire des fiches de lecture (3 max);
+			\item Faire une présentation power-point d'un article ;
+			\item Rédaction de l'état de l'art ;
+			\item Faire le diagramme de Gantt ;
+			\item Faire un Excel synthétique de toutes les solutions possibles avec leurs critères de sélection ;
+		\end{itemize}
+	\end{planification}
+\end{fichesuivi}
+
+\begin{fichesuivi}{19 novembre 2018}{25 novembre 2018}
+	\tempstravailA{12}{15}
+
+	\begin{travaileffectue}
+		\begin{itemize}
+			\item tâche 1 : Rédaction de l'état de l'art ; difficulté : moyenne ; achevée.
+			\item tâche 2 : Recherche d'article sur le tracking d'objet avec code source ; simplicité ; achevée.
+			\item tâche 3 : Présentation des 3 propositions ; simplicité ; achevée.
+			%\item tâche 5 : Lecture de quelques documents (thèses, articles...) sur le sujet ; difficulté : moyenne ; réalisée à  $30$ \%
+		\end{itemize}
+	\end{travaileffectue}
+
+	\begin{travailnoneffectue}
+		\begin{itemize}
+				\item tâche 1 : Rédaction de la fiche de suivi de la semaine 47, oublie ;
+			%\item tâche 1 : raisons ; reports, annulations ; etc. ;
+		\end{itemize}
+	\end{travailnoneffectue}
+
+	\begin{echange}
+		\begin{itemize}
+			\item Explication des différentes approches sur le suivi de personnes ;
+			%\item questions ;
+			%\item réponses ;
+			%\item éléments de clarification, compréhension ;
+			%\item choix, orientations, redéfinitions ;
+			%\item etc.
+			%\item etc.
+		\end{itemize}
+	\end{echange}
+
+	\begin{planification}
+		\begin{itemize}
+			%\item recherches à effectuer ;
+			%\item articles à lire, comprendre et analyser ;
+			%\item codes à développer ;
+			%\item etc.
+			\item Finir la rédaction de l'état de l'art;
+			\item Rédiger la partie sur les propositions (3 max) ;
+			\item Faire le diagramme de Gantt ;
+		\end{itemize}
+	\end{planification}
+\end{fichesuivi}
+
+\begin{fichesuivi}{26 novembre 2018}{2 décembre 2018}
+	\tempstravailA{12}{00}
+
+	\begin{travaileffectue}
+		\begin{itemize}
+			\item tâche 1 : Rédaction de l'état de l'art ; difficulté : moyenne ; achevée.
+			\item tâche 2 : Rédiger la partie sur les propositions (3 max) ; difficile ; réalisée à  $0$ \%.
+			\item tâche 3 : Faire le diagramme de Gantt ; moyenne ; réalisée à  $0$ \%.
+			%\item tâche 5 : Lecture de quelques documents (thèses, articles...) sur le sujet ; difficulté : moyenne ; réalisée à  $30$ \%
+		\end{itemize}
+	\end{travaileffectue}
+
+	\begin{travailnoneffectue}
+		\begin{itemize}
+				\item tâche 1 : Présentation power-point , reporter au lundi de la semaine prochaine ;
+			%\item tâche 1 : raisons ; reports, annulations ; etc. ;
+		\end{itemize}
+	\end{travailnoneffectue}
+
+	%\begin{echange}
+		%\begin{itemize}
+			%\item Explication des différentes approches sur le suivi de personnes ;
+			%\item questions ;
+			%\item réponses ;
+			%\item éléments de clarification, compréhension ;
+			%\item choix, orientations, redéfinitions ;
+			%\item etc.
+			%\item etc.
+		%\end{itemize}
+	%\end{echange}
+
+	\begin{planification}
+		\begin{itemize}
+			%\item recherches à effectuer ;
+			%\item articles à lire, comprendre et analyser ;
+			%\item codes à développer ;
+			%\item etc.
+			\item Présentation power-point pour la soutenance;
+		\end{itemize}
+	\end{planification}
+\end{fichesuivi}
+
+%Le tableau récapitulatif du temps consacré au projet est \emph{obligatoire}.
+%Si vous n'utilisez pas strictement le modèle de fiche de suivi fourni, il vous faudra l'établir vous-même.
+%Dans le cas contraire, une commande permet de le générer automatiquement avec le texte qui le référence et des hyper-liens vers chacune des fiches (paragraphe ci-dessous).
+
+\printweeksummary
+
+\chapter{Auto-contrôle et auto-évaluation}
+
+%Cette annexe est \emph{obligatoire}.
+
+La figure~\ref{fig:AutoEvaluationTravailIntermediaire} permet d'énumérer un certain nombre de points importants dans les trois composantes du travail~:
+\begin{enumerate}
+   \item rapport~;
+   \item présentation orale~;
+   \item travail de fond~;
+\end{enumerate}
+ainsi que d'évaluer notre niveau de satisfaction à l'issue de la phase~I, composée de trois étapes~:
+\begin{enumerate}
+   \item étude préalable~;
+   \item étude bibliographique~;
+   \item conception générale.
+\end{enumerate}
+
+Les points de satisfaction ou d'insatisfaction peuvent être approfondis.
+
+\begin{figure*}
+   \centering
+      \ifscreen % macro TeX (issue de la classe report-rd-info.cls) permettant d'ajuster le contenu en fonction du l'orientation du document (<<~screen~>> ou pas)
+         \rotatebox{90}{\includegraphics[width=0.9\textheight]{Images/Grille-Evaluation-PRD1}}
+      \else
+         \includegraphics[width=0.9\textwidth]{Images/Grille-Evaluation-PRD1}
+      \fi
+   \caption{Points à contrôler à l'issue de la phase I}
+   \label{fig:AutoEvaluationTravailIntermediaire}
+\end{figure*}
+
+%La figure~\ref{fig:AutoEvaluationTravailFinal} permet d'énumérer un certain nombre de points importants dans les trois composantes du travail ainsi que d'évaluer notre niveau de satisfaction à l'issue de la phase~II, constituée de~:
+%\begin{enumerate}
+   %\item la conception détaillée~;
+   %\item la réalisation~;
+   %\item la recette.
+%\end{enumerate}
+
+%\begin{figure*}
+   %\centering
+      %\ifscreen
+         %\rotatebox{90}{\includegraphics[width=0.9\textheight]{Images/Grille-Evaluation-PRD2}}
+      %\else
+         %\includegraphics[width=0.9\textwidth]{Images/Grille-Evaluation-PRD2}
+      %\fi
+   %\caption{Points à contrôler à l'issue de la phase II}
+   %\label{fig:AutoEvaluationTravailFinal}
+%\end{figure*}
+
+\end{document}

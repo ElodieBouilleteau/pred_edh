@@ -1,0 +1,86 @@
+\documentclass[11pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\title{Compte-rendu réunion du 16/10/2018}
+\author{Élodie Bouilleteau}
+\date{Mercredi 17 Octobre 2018}
+
+\begin{document}
+
+\maketitle
+\renewcommand{\thesection}{\arabic{section}} 
+\section{Information générales}
+Sujet du PRED : Analyse de la satisfaction client
+\\
+	\begin{itemize}
+		\item Où : Bureau de NN
+		\item Quand : 16/10/2018
+		\item Participants : EB et NN
+	\end{itemize}
+
+\section{Abréviations utilisées}
+
+\subsection{Projet de Recherche et Développement (PRED)}
+- Projet de Recherche et Développement (PRED)
+
+\subsection{Encadrants (EN)}
+ 	\begin{itemize}
+		\item Nicolas Normand (NN)
+		\item Stéphane Gaudin (SG)
+	\end{itemize}
+    
+\subsection{Etudiants (ET)}
+- Élodie Bouilleteau (EB)
+
+\subsection{Encadrants et étudiants (ALL)}
+- Encadrants et étudiants (ALL)
+
+\newpage
+
+\section{Point abordés lors de la réunion}
+	\subsection{Point de précision du contexte du PRED}
+		\begin{itemize}
+			\item L'analyse en temps réel est d'actualité jusqu'à ce que l'on trouve une technique et/ou une méthode qui permette d'avoir des résultats d'analyse en même temps que la vidéo est enregistrée.\\
+			\item Il est important de se concentrer sur plusieurs méthodes qui seront répondre aux problèmes que l'on va rencontrer. Cela nous permettra de choisir la méthode adapter possédant de bonne performances et qui soit faisable.\\
+			\item Discutions sur les méthodes possible (ex: Réseau de neurone de convolution)
+		\end{itemize}
+
+\section{Problème}
+	\begin{enumerate}
+		\item Détection de visages et / ou de personnes. Il faudra être capable de détecter les personnes dans une image.\\
+		\item Traçabilité de l'individu. Il faudra être capable d'identifier une personne identique sur deux images différentes.\\
+		\item Gérer les occlusions. Il faudra être capable de pouvoir suivre une personne quand celle-ci passe derrière une autre personne ou un objet et qu'elle réapparait à l'image suivante.
+	\end{enumerate}
+
+\section{Tâches}
+	\begin{itemize}
+		\item Trouver une base de données publique afin de tester nos résultats ou de l'utiliser en tant que base d'apprentissage pour un réseau.\\
+		\item Rechercher et comprendre la structure des différentes méthodes.\\
+		\item Connaître les problèmes résolus par les méthodes trouvés.\\
+		\item Regardes les performances et la faisabilité des méthodes.
+	\end{itemize}
+
+\section{Quelques méthodes possibles}
+	\begin{itemize}
+		\item Méthode de Viola-Jones crée en 2001.
+		\item Réseau de neurone de convolution.
+		\item Deep Learning avec Pytorch.
+		\item Récupérer un réseau existant spécialisé dans une tâche et l'utiliser dans notre réseau.
+	\end{itemize}
+
+\section{Questions}
+	\begin{itemize}
+		\item Si un individu sort du champ de la caméra et qu'il revient, doit-on être capable de détecter et d'associer ce nouvel individu à l'individu déjà enregistré ?
+	\end{itemize}
+		
+%\section{Prochaine réunion}
+%	\begin{itemize}
+%		\item Où : Bureau de NN
+%		\item Quand : 16/10/2018
+%		\item Participants : NN, EB
+%	\end{itemize}
+
+\end{document}

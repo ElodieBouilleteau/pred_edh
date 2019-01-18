@@ -1,0 +1,264 @@
+#% Do not delete the line below; configure depends on this
+#  \DeclareLaTeXClass{report-rd-info}{Rapport PRD Polytech Nantes}
+#  \DeclareCategory{Reports}
+# Report textclass definition file. Taken from initial LyX source code
+# Author : Matthias Ettrich <ettrich@informatik.uni-tuebingen.de>
+# Transposed by Pascal André <andre@via.ecp.fr>
+# Heavily modifed and enhanced by several developers.
+
+Format 35
+Input stdclass.inc
+Input numreport.inc
+
+Style Bibliography
+	TopSep                4
+	LabelString           "Bibliography"
+	LabelFont
+	  Series              Bold
+	  Size                Huge
+	EndFont
+End
+
+
+# Page de titre
+
+Style Auteur_A
+	CopyStyle	Author
+	LatexType	command
+	LatexName 	authorA
+	Labeltype	Static
+	LabelString	"Auteur A:"
+	Argument 1
+		LabelString	"Prénom"
+		Mandatory	1
+	EndArgument
+End
+
+Style Auteur_B
+	CopyStyle	Auteur_A
+	LatexName 	authorB
+	LabelString	"Auteur B:"
+End
+
+Style Encadrant
+	CopyStyle	Auteur_A
+	LatexName 	supervisor
+	LabelString	"Encadrant:"
+End
+
+Style CoEncadrant
+	CopyStyle	Auteur_A
+	LatexName 	cosupervisor
+	LabelString	"Co-encadrant:"
+End
+
+Style Coordinateur
+	CopyStyle	Auteur_A
+	LatexName 	coordinator
+	LabelString	"Coordinateur:"
+End
+
+Style Institution
+	CopyStyle	Author
+	LatexType	Command
+	LatexName	institution
+	Labeltype	Static
+	LabelString	"Institution:"
+	Align		center
+End
+
+Style CoInstitution
+	CopyStyle	Author
+	LatexType	Command
+	LatexName	coinstitution
+	Labeltype	Static
+	LabelString	"Co-institution:"
+	Argument post:1
+		LabelString	"Fichier"
+		Mandatory	1
+	EndArgument
+	Argument post:2
+		LabelString	"Taille"
+		LeftDelim	{
+		RightDelim  }
+	EndArgument
+	Align		center
+End
+
+Style Theme
+	CopyStyle	Author
+	LatexType	Command
+	LatexName	theme
+	Labeltype	Static
+	LabelString	"Theme:"
+	Align		center
+End
+
+Style SousTitre
+	CopyStyle	Title
+	LatexName 	subtitle
+	TextFont
+		Size	large
+	End
+End
+
+
+# Résumé abstract et autres
+
+Style Abstract
+	CopyStyle 	Abstract
+	InTitle	1
+End
+
+Style Classification
+	CopyStyle		Abstract
+	Category 	"FrontMatter"
+	LatexName	classification
+	LabelString	"Classification"
+End
+
+Style Categorie
+	Category 	"FrontMatter"
+	LatexType	Command
+	LatexName	category
+	Argument post:1
+		LabelString	"Catégorie"
+		Mandatory	1
+	EndArgument
+	Argument post:2
+		LabelString	"Sous-catégorie"
+		Mandatory	1
+	EndArgument
+End
+
+Style Termes
+	Category 	"FrontMatter"
+	LatexType	Command
+	LatexName	terms
+	LabelString	"Termes: "
+	Labeltype	Static
+	LabelFont	
+		Series	Bold
+	End
+	LeftMargin   MMMMN
+	LabelSep     xx
+End
+
+Style MotsCles
+	Category 	"FrontMatter"
+	LatexType	Command
+	LatexName	keywords
+	LabelString	"MotsCles: "
+	Labeltype	Static
+	LabelFont
+		Series	Bold
+	End
+	LeftMargin   MMMMN
+	LabelSep     xx
+End
+
+Style Remerciements
+  CopyStyle		Abstract
+  LatexName		acknowledgements
+  LabelString	"Remerciements"
+  InTitle	0
+End
+
+ # Fiches de suivi
+
+Counter CptFiche
+End
+
+#Style FicheDeSuivi
+#	Align		lef#t
+#	Labeltype	Abo#ve
+#	LabelFont#
+#		Series	Bold
+#		Size	larger
+#	End
+#	BottomSep	1
+#	Category 	"FicheDeSuivi"
+#	LatexName	fichesuivi
+#	LatexType	environment
+#	LabelString	"Fiche de suivi \arabic{CptFiche}"
+#	Argument 1
+#		LabelString	"Début"
+#		Mandatory	1
+#	EndArgument
+#	Argument 2
+#		LabelString	"Fin"
+#		Mandatory	1
+#	EndArgument
+#	LabelCounter	"CptFiche"
+#	KeepEmpty	1	
+#End
+
+Style TempsTravailA
+	Category 	"FicheDeSuivi"
+	LatexType	Command
+	LatexName	tempstravailA
+	LabelType 	static
+	LabelString "Temps de travail A: "
+	LeftMargin   MMMMMMMMMMMM
+	LabelSep     xx
+	TopSep		0.5
+	Argument 1
+		LabelString	"Heures"
+		Mandatory	1
+	EndArgument
+End
+
+Style TempsTravailB
+	CopyStyle 	TempsTravailA
+	LatexName	tempstravailB
+	LabelString "Temps de travail B: "
+End
+
+Style TravailEffectue
+	TopSep		1
+	LabelType 	Above
+	LabelFont
+		Series	Bold
+		Size	large
+	End
+	Align		Left
+	Category 	"FicheDeSuivi"
+	LatexType	environment
+	LatexName	travaileffectue
+	LabelString	"Travail effectué"
+	KeepEmpty	1
+End
+
+Style TravailNonEffectue
+	CopyStyle 	TravailEffectue
+	LatexName	travailnoneffectue
+	LabelString	"Travail non effectué"
+End
+
+Style Echange
+	CopyStyle 	TravailEffectue
+	LatexName	echange
+	LabelString	"Echange"
+End
+
+Style Planification
+	CopyStyle 	TravailEffectue
+	LatexName	planification
+	LabelString	"Planification"
+End
+
+InsetLayout Flex:FicheDeSuivi
+	LyXType			Custom
+	LabelString		"Fiche de suivi"
+	Decoration  	Classic
+	LatexName		fichesuivi
+	LatexType		environment
+	Argument 1
+		LabelString	"Début"
+		Mandatory	1
+	EndArgument
+	Argument 2
+		LabelString	"Fin"
+		Mandatory	1
+	EndArgument
+End

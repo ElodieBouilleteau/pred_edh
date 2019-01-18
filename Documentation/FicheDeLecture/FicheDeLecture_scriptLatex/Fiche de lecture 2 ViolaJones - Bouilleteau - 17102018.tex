@@ -1,0 +1,70 @@
+\documentclass[11pt]{report}
+
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+\title{Fiche de Lecture 2}
+\author{Élodie Bouilleteau}
+\date{Mercredi 17 Octobre 2018}
+
+\begin{document}
+
+\maketitle
+\renewcommand{\thesection}{\arabic{section}} 
+
+\section{Référence de l'article}
+	\begin{flushleft}
+		\textbf{Titre} : Rapid object detection using a boosted cascade of simple features.
+	\end{flushleft}
+	\textbf{Auteurs} : Paul Viola et Michael Jones.\\\\
+	\textbf{Conférence} : Conference on Computer Vision and Pattern Recognition\\\\
+	\textbf{Date de parution} : 2001\\\\
+	\textbf{Lien} : \url{https://ieeexplore.ieee.org/document/990517}
+	
+\section{Situation des auteurs}
+Paul Viola, ancien professeur au MIT et vice-président des sciences pour
+Amazon Air est chercheur en vision par ordinateur. Michael Jones travaillais
+en 2001 pour le laboratoire Compaq CRL situé à Cambridge.
+
+\section{Introduction}
+Cette publication traite d’un framework robuste de détection d’objet
+visuel rapide et possédant un taux de précision élevé mis en place par les
+auteurs.
+
+\section{Définition}
+\subsection{Image intégrale}
+L'image intégrale peut être calculée à partir d'une image en utilisant quelques opérations par pixel. Une fois calculée, chacune de ces caractéristiques peut être calculée à n'importe quelle échelle ou emplacement en temps constant.
+
+\section{Méthode de détection}
+Leur méthode se découpe en 3 clés de contributions :
+\begin{enumerate}
+	\item La première phase est l’introduction d’une nouvelle représentation
+d’image appelée «Image intégrale», qui permet de calculer très rapidement
+les caractéristiques utilisées par le détecteur.
+	\item La deuxième phase est un algorithme d’apprentissage, basé sur Ada-
+Boost, qui sélectionne un petit nombre de caractéristiques visuelles
+critiques de Haar et produit des classificateurs extrêmement efficaces.
+	\item La troisième étape est une méthode pour combiner des classificateurs
+dans une "cascade" qui permet d’éliminer rapidement les régions
+d’arrière-plan de l’image tout en se concentrant sur les régions
+prometteuses.
+\end{enumerate}
+Deux caractéristiques sont relevé pour détecter les visages : La première
+caractéristique mesure la différence d’intensité entre la région des yeux et la
+région sur les joues supérieures. La fonctionnalité tire profit de l’observation
+que la région des yeux est souvent plus sombre que les joues. La deuxième
+caractéristique compare les intensités dans les régions des yeux aux intensités
+sur la région du nez.
+
+\section{Performance}
+Fonctionnant sur des images de 384 x 288 pixels, les visages sont détectés
+à 15 images par seconde sur un Intel Pentium III 700 MHz classique.
+
+\section{Conclusion}
+Cette article explique une méthode rapide de détection de visage en sélectionnant
+des caractéristiques grâce à une variance de l’algorithme AdaBoost
+et en apprenant ses caractéristiques à un classificateur.
+
+\end{document}
